@@ -10,14 +10,14 @@ import "../contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
 contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, AccessControlUpgradeable, PausableUpgradeable {
 
-    struct Hero{
-        Animal pet;
-        uint256[4] Max_Amount;
-        uint256[4] Minted_Amount;
-        uint128[4] Price;
-        uint128[4][4] Skill_Upgrade_price;
-        uint128[4] Hamsters_amount;
-    }
+    // struct Hero{
+    //     Animal pet;
+    //     uint256[4] Max_Amount;
+    //     uint256[4] Minted_Amount;
+    //     uint128[4] Price;
+    //     uint128[4][4] Skill_Upgrade_price;
+    //     uint128[4] Hamsters_amount;
+    // }
 
     // bytes32 public constant DEFAULT_ADMIN_ROLE = keccak256("DEFAULT_ADMIN_ROLE");
     enum AnimalType{
