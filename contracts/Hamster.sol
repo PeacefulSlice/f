@@ -24,10 +24,10 @@ contract Hamster is Initializable, ERC721Upgradeable, AccessControlUpgradeable {
         Bull,
         Bear,
         Whale
-
     }
+
     struct Animal{
-        AnimalType[] name;
+        AnimalType name;
         uint256[8] Color_and_effects;
         uint8 speed; 
         uint8 immunity;
@@ -41,14 +41,24 @@ contract Hamster is Initializable, ERC721Upgradeable, AccessControlUpgradeable {
         uint8 Tournaments_wins_percent;
         uint256 MHT_paid;
         uint256 MHT_won;
-        // uint256[100] Items
+        mapping (uint256 => bool) items;
     }
+
+    mapping(uint8 => uint64) animalMintedAmount;
+    mapping(uint8 => uint256) animalPrices;
+    mapping(uint8 => mapping(uint8 => uint256)) animalSkillUpgradePrices;
+    mapping(uint8 => uint256) animalHamsterBurnAmount;
+
+
+    //tpkenID => Animal
+    mapping(uint256 => Animal) animals;
+
 
     function supportsInterface(bytes4 interfaceID) public view virtual override(ERC721Upgradeable, AccessControlUpgradeable)  returns (bool) {
         return AccessControlUpgradeable.supportsInterface(interfaceID);
     }
     
-    Animal[] private _animals;
+    
     function initialize(
         address _admin
 
@@ -56,7 +66,20 @@ contract Hamster is Initializable, ERC721Upgradeable, AccessControlUpgradeable {
         __AccessControl_init();
         _setupRole(DEFAULT_ADMIN_ROLE, _admin);
 
-        
+        uint256 mhtDecimals = 10**18;
+
+        //hamster
+        animalMintedAmount[0] = 0;
+        animalPrices[0] = 10*mhtDecimals;
+        animalSkillUpgradePrices[0][0] = 5*mhtDecimals;
+        animalSkillUpgradePrices[0][1] = 75*mhtDecimals;
+        animalSkillUpgradePrices[0][2] = 75*mhtDecimals;
+        animalSkillUpgradePrices[0][3] = 150*mhtDecimals;
+        animalHamsterBurnAmount[0] = 1;
+        //bull
+        //bear
+        //whale
+
 
     }
 
@@ -110,8 +133,4 @@ contract Hamster is Initializable, ERC721Upgradeable, AccessControlUpgradeable {
     }
 
 
-
-
-
-    uint256[50] private __gap;
 }
