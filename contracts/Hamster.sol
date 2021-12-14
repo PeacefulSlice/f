@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../node_modules/@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-import "../node_modules/base64-sol/base64.sol";
-import "../node_modules/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
-import "../node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "../node_modules/@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "../contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "../base64-sol/base64.sol";
+import "../contracts-upgradeable/security/PausableUpgradeable.sol";
+import "../contracts-upgradeable/utils/ContextUpgradeable.sol";
+import "../contracts-upgradeable/proxy/utils/Initializable.sol";
+import "../contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
-contract Hamster is Initializable, ERC721Upgradeable, AccessControlUpgradeable {
+contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, AccessControlUpgradeable, PausableUpgradeable {
 
     struct Hero{
         Animal pet;
@@ -33,17 +34,10 @@ contract Hamster is Initializable, ERC721Upgradeable, AccessControlUpgradeable {
         uint8 immunity;
         uint8 armor;
         uint32 response;
-        uint256 games_played;
-        uint8 wins_percent;
-        uint256 p2p_Games_played;
-        uint8 p2p_Wins_percent;
-        uint256 Tournaments_played;
-        uint8 Tournaments_wins_percent;
-        uint256 MHT_paid;
-        uint256 MHT_won;
         mapping (uint256 => bool) items;
     }
 
+    mapping(uint8 => uint32) animalMaxAmount;
     mapping(uint8 => uint64) animalMintedAmount;
     mapping(uint8 => uint256) animalPrices;
     mapping(uint8 => mapping(uint8 => uint256)) animalSkillUpgradePrices;
@@ -72,13 +66,34 @@ contract Hamster is Initializable, ERC721Upgradeable, AccessControlUpgradeable {
         animalMintedAmount[0] = 0;
         animalPrices[0] = 10*mhtDecimals;
         animalSkillUpgradePrices[0][0] = 5*mhtDecimals;
-        animalSkillUpgradePrices[0][1] = 75*mhtDecimals;
-        animalSkillUpgradePrices[0][2] = 75*mhtDecimals;
-        animalSkillUpgradePrices[0][3] = 150*mhtDecimals;
+        animalSkillUpgradePrices[0][1] = 10*mhtDecimals;
+        animalSkillUpgradePrices[0][2] = 15*mhtDecimals;
+        animalSkillUpgradePrices[0][3] = 20*mhtDecimals;
         animalHamsterBurnAmount[0] = 1;
         //bull
+        animalMintedAmount[1] = 0;
+        animalPrices[1] = 150*mhtDecimals;
+        animalSkillUpgradePrices[1][0] = 75*mhtDecimals;
+        animalSkillUpgradePrices[1][1] = 150*mhtDecimals;
+        animalSkillUpgradePrices[1][2] = 225*mhtDecimals;
+        animalSkillUpgradePrices[1][3] = 300*mhtDecimals;
+        animalHamsterBurnAmount[1] = 20;
         //bear
+        animalMintedAmount[2] = 0;
+        animalPrices[2] = 150*mhtDecimals;
+        animalSkillUpgradePrices[2][0] = 75*mhtDecimals;
+        animalSkillUpgradePrices[2][1] = 150*mhtDecimals;
+        animalSkillUpgradePrices[2][2] = 225*mhtDecimals;
+        animalSkillUpgradePrices[2][3] = 300*mhtDecimals;
+        animalHamsterBurnAmount[2] = 20;
         //whale
+        animalMintedAmount[3] = 0;
+        animalPrices[3] = 300*mhtDecimals;
+        animalSkillUpgradePrices[3][0] = 150*mhtDecimals;
+        animalSkillUpgradePrices[3][1] = 300*mhtDecimals;
+        animalSkillUpgradePrices[3][2] = 450*mhtDecimals;
+        animalSkillUpgradePrices[3][3] = 600*mhtDecimals;
+        animalHamsterBurnAmount[3] = 50;
 
 
     }
@@ -95,33 +110,17 @@ contract Hamster is Initializable, ERC721Upgradeable, AccessControlUpgradeable {
                      bytes(
                          abi.encodePacked(
                              '{"type":"',
-                             _animals[tokenID].name,
+                             animals[tokenID].name,
                              '", "Color and effects":" ',
-                             _animals[tokenID].Color_and_effects,
+                             animals[tokenID].Color_and_effects,
                              '", "Speed":" ',
-                             _animals[tokenID].speed,
+                             animals[tokenID].speed,
                              '", "Immunity":" ',
-                             _animals[tokenID].immunity,
+                             animals[tokenID].immunity,
                              '", "Armor":" ',
-                             _animals[tokenID].armor,
+                             animals[tokenID].armor,
                              '", "Response":" ',
-                             _animals[tokenID].response,
-                             '", "Games played":" ',
-                             _animals[tokenID].games_played,
-                             '", "Wins %":" ',
-                             _animals[tokenID].wins_percent,
-                             '", "p2p Games played":" ',
-                             _animals[tokenID].p2p_Games_played,
-                             '", "p2p Wins %":" ',
-                             _animals[tokenID].p2p_Wins_percent,
-                             '", "Tournaments played":" ',
-                             _animals[tokenID].Tournaments_played,
-                             '", "Tournaments wins %":" ',
-                             _animals[tokenID].Tournaments_wins_percent,
-                             '", "MHT paid":" ',
-                             _animals[tokenID].MHT_paid,
-                             '", "MHT won":" ',
-                             _animals[tokenID].MHT_won,
+                             animals[tokenID].response,
                              '"}'
                          )
                      )
