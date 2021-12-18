@@ -6,21 +6,12 @@ import "../base64-sol/base64.sol";
 import "../contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "../contracts-upgradeable/proxy/utils/Initializable.sol";
-import "../contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import '../contracts-upgradeable/access/OwnableUpgradeable.sol';
 
-contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, AccessControlUpgradeable, PausableUpgradeable {
 
-    // struct Hero{
-    //     Animal pet;
-    //     uint256[4] Max_Amount;
-    //     uint256[4] Minted_Amount;
-    //     uint128[4] Price;
-    //     uint128[4][4] Skill_Upgrade_price;
-    //     uint128[4] Hamsters_amount;
-    // }
+contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, OwnableUpgradeable, PausableUpgradeable {
 
-    // bytes32 public constant DEFAULT_ADMIN_ROLE = keccak256("DEFAULT_ADMIN_ROLE");
-    enum AnimalType{
+   enum AnimalType{
         Hamster,
         Bull,
         Bear,
@@ -30,6 +21,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Access
     struct Animal{
         AnimalType name;
         uint256[8] Color_and_effects;
+        // mapping(uint8 => uint256) Color_and_effects;
         uint8 speed; 
         uint8 immunity;
         uint8 armor;
@@ -42,24 +34,19 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Access
     mapping(uint8 => uint256) animalPrices;
     mapping(uint8 => mapping(uint8 => uint256)) animalSkillUpgradePrices;
     mapping(uint8 => uint256) animalHamsterBurnAmount;
-
-
-    //tpkenID => Animal
     mapping(uint256 => Animal) animals;
-
-
-    function supportsInterface(bytes4 interfaceID) public view virtual override(ERC721Upgradeable, AccessControlUpgradeable)  returns (bool) {
-        return AccessControlUpgradeable.supportsInterface(interfaceID);
-    }
-    
+   
     
     function initialize(
         address _admin
 
     ) public initializer{
-        __AccessControl_init();
-        _setupRole(DEFAULT_ADMIN_ROLE, _admin);
-
+        
+        __Context_init_unchained();
+        __Pausable_init_unchained();
+        __Ownable_init_unchained();
+        transferOwnership(_admin);
+        
         uint256 mhtDecimals = 10**18;
 
         //hamster
@@ -98,6 +85,14 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Access
 
     }
 
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
 
 
     function tokenURI(uint256 tokenID) public view virtual override returns(string memory){
