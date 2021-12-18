@@ -8,7 +8,6 @@ import "../contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "../contracts-upgradeable/proxy/utils/Initializable.sol";
 import '../contracts-upgradeable/access/OwnableUpgradeable.sol';
 
-
 contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, OwnableUpgradeable, PausableUpgradeable {
 
    enum AnimalType{

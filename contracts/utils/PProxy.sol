@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../../node_modules/@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
+import "../../openzeppelin-contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
 contract PPRoxy is TransparentUpgradeableProxy {
   
