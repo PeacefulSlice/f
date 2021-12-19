@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-
+import "./../contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "./../contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "./../contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./../contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./../contracts-upgradeable/metatx/ERC2771ContextUpgradeable.sol";
+import "./Hamster.sol";
 
 
 
 contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable, ERC2771ContextUpgradeable {
-
+    using SafeERC20Upgradeable for IERC20Upgradeable;
+    address public tokenMHT;
 
 
     bytes32 public constant USER_ROLE = keccak256("USER_ROLE");
@@ -30,6 +32,17 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable, E
 
 
     }
+
+    function setTokenMHT(address _tokenMHT) external onlyAdmin{
+        tokenMHT = _tokenMHT;
+
+    }
+
+    function _mintAnimal(uint256 tokenID, uint256 amount) internal onlyAdmin{
+        
+    }
+
+
 
     modifier onlyAdmin() {
         require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "Caller is not the Admin");
