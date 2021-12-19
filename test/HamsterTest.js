@@ -1,6 +1,6 @@
 const web3 =  require("web3")
 const chai = require('chai');
-const { current } = require('@openzeppelin/test-helpers/src/expectEvent');
+const { current, inTransaction } = require('@openzeppelin/test-helpers/src/expectEvent');
 const BN = web3.utils.BN;
 const expect = chai.expect;
 chai.use(require('chai-match'));
@@ -34,6 +34,10 @@ contract('Hamster', (accounts)=>{
             .then(instance => proxyInstance = instance);
         hamster = await Hamster.at(proxyInstance.address);
 
+
+    })
+
+    it('', async()=>{
 
     })
 })

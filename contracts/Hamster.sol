@@ -16,18 +16,22 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         Bear,
         Whale
     }
+    AnimalType public Convert;
+    uint256 public adminAnimal;
+    
 
     struct Animal{
         AnimalType name;
-        uint256[8] Color_and_effects;
-        // mapping(uint8 => uint256) Color_and_effects;
+        uint256[8] color_and_effects;
+        // mapping(uint8 => uint256) color_and_effects;
         uint8 speed; 
         uint8 immunity;
-        uint8 armor;
+        uint8 armour;
         uint32 response;
         mapping (uint256 => bool) items;
     }
 
+    mapping(uint8 => AnimalType) animalConvert;
     mapping(uint8 => uint32) animalMaxAmount;
     mapping(uint8 => uint64) animalMintedAmount;
     mapping(uint8 => uint256) animalPrices;
@@ -47,7 +51,14 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         transferOwnership(_admin);
         
         uint256 mhtDecimals = 10**18;
+        adminAnimal = 0;
 
+        
+        animalConvert[0] = AnimalType.Hamster;
+        animalConvert[1] = AnimalType.Bull;
+        animalConvert[2] = AnimalType.Bear;
+        animalConvert[3] = AnimalType.Whale;
+        
         //hamster
         animalMintedAmount[0] = 0;
         animalPrices[0] = 10*mhtDecimals;
@@ -81,7 +92,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         animalSkillUpgradePrices[3][3] = 600*mhtDecimals;
         animalHamsterBurnAmount[3] = 50;
 
-
+        renewAnimalParameters(adminAnimal, 0, 0, 4, 2000);
     }
 
 
@@ -106,13 +117,13 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
                              '{"type":"',
                              animals[tokenID].name,
                              '", "Color and effects":" ',
-                             animals[tokenID].Color_and_effects,
+                             animals[tokenID].color_and_effects,
                              '", "Speed":" ',
                              animals[tokenID].speed,
                              '", "Immunity":" ',
                              animals[tokenID].immunity,
-                             '", "Armor":" ',
-                             animals[tokenID].armor,
+                             '", "Armour":" ',
+                             animals[tokenID].armour,
                              '", "Response":" ',
                              animals[tokenID].response,
                              '"}'
@@ -123,6 +134,56 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
             );
 
 
+    }
+
+    function readParameters(uint256 tokenID) public view onlyOwner returns(
+        AnimalType, 
+        // uint256[] memory , 
+        uint8,uint8,uint8,uint32) {
+        
+        return(
+            animals[tokenID].name,
+            // animals[tokenID].color_and_effects,
+            animals[tokenID].speed,
+            animals[tokenID].immunity,
+            animals[tokenID].armour,
+            animals[tokenID].response
+        );
+
+    }
+    function createAnimal(uint256 tokenID, uint8 _animalType) public {
+        require((balanceOf(msg.sender)>=animalPrices[_animalType]),'not enough money');
+        _mintAnimal(tokenID, _animalType);
+    }
+    
+    function _mintAnimal(uint256 tokenID, uint8 _animalType) public virtual onlyOwner{
+        // require((balanceOf(msg.sender)>=animalPrices[_animalType]),'not enough money');
+        animals[tokenID].name = animalConvert[_animalType];
+
+        animals[tokenID].speed = animals[adminAnimal].speed;
+        animals[tokenID].immunity = animals[adminAnimal].immunity;
+        animals[tokenID].armour = animals[adminAnimal].armour;
+        animals[tokenID].response = animals[adminAnimal].response;
+
+        
+    }
+
+
+
+    function renewAnimalParameters(
+        uint256 _adminAnimal,
+        uint8 _speed,
+        uint8 _immunity,
+        uint8 _armour,
+        uint32 _response
+        ) public onlyOwner returns(uint256){
+
+        animals[_adminAnimal].speed = _speed;
+        animals[_adminAnimal].immunity = _immunity;
+        animals[_adminAnimal].armour = _armour;
+        animals[_adminAnimal].response = _response;
+
+        return _adminAnimal;
     }
 
 
