@@ -6,7 +6,7 @@ import "./../contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "./../contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./../contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./../contracts-upgradeable/metatx/ERC2771ContextUpgradeable.sol";
-import "./Hamster.sol";
+import "./../interfaces/IHamster.sol";
 
 
 
@@ -23,12 +23,17 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable, E
         return ERC2771ContextUpgradeable._msgData();
     }
 
-    function initialize(address _admin)public initializer{
+    function initialize(
+        address _admin,
+        address _tokenMHT
+        )public initializer{
         __Context_init_unchained();
         __AccessControl_init();
         __Pausable_init_unchained();
         
         _setupRole(DEFAULT_ADMIN_ROLE, _admin);
+        tokenMHT = _tokenMHT;
+
 
 
     }
@@ -38,9 +43,11 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable, E
 
     }
 
-    function _mintAnimal(uint256 tokenID, uint256 amount) internal onlyAdmin{
-        
-    }
+    // function _mintAnimal(uint256 _tokenID, uint256 _amount) public onlyAdmin{
+    //     _mintAnimal(_tokenID, _amount);
+    // }
+
+    function 
 
 
 

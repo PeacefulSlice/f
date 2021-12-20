@@ -95,6 +95,49 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         renewAnimalParameters(adminAnimal, 0, 0, 4, 2000);
     }
 
+    function _convertAnimal(AnimalType _name) internal view onlyOwner returns(uint8){
+        uint8 _index;
+        if(_name == AnimalType.Hamster){
+            _index = 0;
+        } else if(_name == AnimalType.Bull){
+            _index = 1;
+        } else if(_name == AnimalType.Bear){
+            _index = 2;
+        } else if(_name == AnimalType.Whale){
+            _index = 3;
+        }
+        return _index;
+    }
+
+    function upgradeSpeed(uint256 tokenID) public {
+        uint8 _level = animals[tokenID].speed;
+        require((_level>=0)&&(_level<4),'level is not in boundaries');
+        require((balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[tokenID].name)][_level]),'not enough money for Speed upgrade');
+        animals[tokenID].speed++;
+    } 
+
+    function upgradeImmunity(uint256 tokenID) public {
+        uint8 _level = animals[tokenID].immunity;
+        require((_level>=0)&&(_level<4),'level is not in boundaries');
+        require((balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[tokenID].name)][_level]),'not enough money for Immunity upgrade');
+        animals[tokenID].immunity++;
+    } 
+
+    function upgradeArmour(uint256 tokenID) public {
+        uint8 _level = 4 - animals[tokenID].armour;
+        require((_level>0)&&(_level<=4),'level is not in boundaries');
+        require((balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[tokenID].name)][_level]),'not enough money for Armour upgrade');
+        animals[tokenID].armour--;
+    } 
+
+    function upgradeResponse(uint256 tokenID) public {
+        uint8 _level = uint8(animals[tokenID].response/500);
+        require((_level>0)&&(_level<=4),'level is not in boundaries');
+        require((balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[tokenID].name)][_level]),'not enough money for Response upgrade');
+        animals[tokenID].response -= 500;
+    } 
+
+
 
     function pause() external onlyOwner {
         _pause();
@@ -103,7 +146,6 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     function unpause() external onlyOwner {
         _unpause();
     }
-
 
     function tokenURI(uint256 tokenID) public view virtual override returns(string memory){
         require(_exists(tokenID),"That hero doesn`t exist");
@@ -136,7 +178,22 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
 
     }
 
-    function readParameters(uint256 tokenID) public view onlyOwner returns(
+    function readDefaultParameters() public view onlyOwner returns(
+        // AnimalType, 
+        // uint256[] memory , 
+        uint8,uint8,uint8,uint32) {
+        
+        return(
+            // animals[adminAnimal].name,
+            // animals[tokenID].color_and_effects,
+            animals[adminAnimal].speed,
+            animals[adminAnimal].immunity,
+            animals[adminAnimal].armour,
+            animals[adminAnimal].response
+        );
+    }
+
+    function readHeroParameters(uint256 tokenID) public view onlyOwner returns(
         AnimalType, 
         // uint256[] memory , 
         uint8,uint8,uint8,uint32) {
@@ -151,12 +208,19 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         );
 
     }
-    function createAnimal(uint256 tokenID, uint8 _animalType) public {
+
+
+
+    function createAnimals(uint256 tokenID, uint8 _animalType, uint256 _animalAmount) public {
         require((balanceOf(msg.sender)>=animalPrices[_animalType]),'not enough money');
-        _mintAnimal(tokenID, _animalType);
+
+        for (uint256 animalID; animalID < _animalAmount; animalID++){
+            _mintAnimal(tokenID++, _animalType);
+        }
+        
     }
     
-    function _mintAnimal(uint256 tokenID, uint8 _animalType) public virtual onlyOwner{
+    function _mintAnimal(uint256 tokenID, uint8 _animalType) public onlyOwner {
         // require((balanceOf(msg.sender)>=animalPrices[_animalType]),'not enough money');
         animals[tokenID].name = animalConvert[_animalType];
 
@@ -167,6 +231,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
 
         
     }
+
 
 
 
