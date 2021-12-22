@@ -15,17 +15,13 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         Bull,
         Bear,
         Whale
-    }
-    AnimalType public Convert;
+   }
     Animal public adminAnimal; // Animal template for token 
     uint256 private lastMintedTokenID;
-
-    
 
     struct Animal{
         AnimalType name;
         uint64[8] color_and_effects;
-        // mapping(uint8 => uint256) color_and_effects;
         uint8 speed; 
         uint8 immunity;
         uint8 armour;
@@ -34,7 +30,6 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     }
 
     // contract limit parameters
-    mapping(uint8 => AnimalType) animalConvert;
     mapping(uint8 => uint32) animalMaxAmount;
     mapping(uint8 => uint64) animalMintedAmount;
     mapping(uint8 => uint256) animalPrices;
@@ -43,13 +38,9 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
 
     // NFT Tokens
     mapping(uint256 => Animal) animals;
-    // Animal[] public animals;
-   
     
     function initialize(
         address _admin
-        // string memory name_,
-        // string memory symbol_
     ) public initializer{
         // __ERC721_init_unchained(name_,symbol_);
         __Context_init_unchained();
@@ -58,12 +49,6 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         transferOwnership(_admin);
         
         uint256 mhtDecimals = 10**18;
-            
-        // animalConvert[0] = AnimalType.Hamster;
-        // animalConvert[1] = AnimalType.Bull;
-        // animalConvert[2] = AnimalType.Bear;
-        // animalConvert[3] = AnimalType.Whale;
-
         //hamster
         animalMintedAmount[0] = 0;
         animalPrices[0] = 10*mhtDecimals;
@@ -96,24 +81,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         animalSkillUpgradePrices[3][2] = 450*mhtDecimals;
         animalSkillUpgradePrices[3][3] = 600*mhtDecimals;
         animalHamsterBurnAmount[3] = 50;
-
-
-        // setDefaultAnimalParameters(adminAnimal);
     }
-
-    // function _convertAnimal(AnimalType _name) internal view onlyOwner returns(uint8){
-    //     uint8 _index;
-    //     if(_name == AnimalType.Hamster){
-    //         _index = 0;
-    //     } else if(_name == AnimalType.Bull){
-    //         _index = 1;
-    //     } else if(_name == AnimalType.Bear){
-    //         _index = 2;
-    //     } else if(_name == AnimalType.Whale){
-    //         _index = 3;
-    //     }
-    //     return _index;
-    // }
     function pause() external onlyOwner {
         _pause();
     }
@@ -155,16 +123,13 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
 
 
     }
-    function setColor_and_effects() private{
-
-    }
+    
     
 
 //  1) read parameters of specific character
     function getHeroParameters(uint256 tokenID) public view returns(
         uint8, 
         uint64[8] memory,
-        // tuple(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64), 
         uint8,uint8,uint8,uint32) {
         
         return(
@@ -195,28 +160,21 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     function renewAnimalParameters(
         uint256 _tokenID,
         uint8 _animalType,
-        uint64 _color0,
-        uint64 _color1,
-        uint64 _color2,
-        uint64 _color3,
-        uint64 _color4,
-        uint64 _color5,
-        uint64 _color6,
-        uint64 _color7,
+        uint64[8] memory _color_and_effects,
         uint8 _speed,
         uint8 _immunity,
         uint8 _armour,
         uint32 _response
         ) private {
         animals[_tokenID].name = AnimalType(_animalType);
-        animals[_tokenID].color_and_effects[0]=_color0;
-        animals[_tokenID].color_and_effects[1]=_color1;
-        animals[_tokenID].color_and_effects[2]=_color2;
-        animals[_tokenID].color_and_effects[3]=_color3;
-        animals[_tokenID].color_and_effects[4]=_color4;
-        animals[_tokenID].color_and_effects[5]=_color5;
-        animals[_tokenID].color_and_effects[6]=_color6;
-        animals[_tokenID].color_and_effects[7]=_color7;
+        animals[_tokenID].color_and_effects[0]=_color_and_effects[0];
+        animals[_tokenID].color_and_effects[1]=_color_and_effects[1];
+        animals[_tokenID].color_and_effects[2]=_color_and_effects[2];
+        animals[_tokenID].color_and_effects[3]=_color_and_effects[3];
+        animals[_tokenID].color_and_effects[4]=_color_and_effects[4];
+        animals[_tokenID].color_and_effects[5]=_color_and_effects[5];
+        animals[_tokenID].color_and_effects[6]=_color_and_effects[6];
+        animals[_tokenID].color_and_effects[7]=_color_and_effects[7];
         animals[_tokenID].speed = _speed;
         animals[_tokenID].immunity = _immunity;
         animals[_tokenID].armour = _armour;
