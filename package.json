@@ -11,6 +11,7 @@
     "init": "truffle init",
     "build": "truffle compile",
     "test": "truffle test --network test",
+    "test-hamster": "concurrently --kill-others \"npm run ganache\" \"npm run test test/HamsterTest.js\"",
     "test-round": "concurrently --kill-others \"npm run ganache\" \"npm run test test/purefiRoundTest.js\"",
     "full-test": "concurrently --kill-others \"npm run ganache\" \"npm run test test/purefiFarmingTest.js test/purefiTokenTest.js\"",
     "test-farming": "concurrently --kill-others \"npm run ganache\" \"npm run test test/purefiFarmingTest.js\"",

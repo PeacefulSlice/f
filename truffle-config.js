@@ -18,7 +18,7 @@
  *
  */
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
+const HDWalletProvider = require('@truffle/hdwallet-provider');
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
@@ -46,6 +46,12 @@ module.exports = {
     //  port: 8545,            // Standard Ethereum port (default: none)
     //  network_id: "*",       // Any network (default: none)
     // },
+    test: {
+      host: "127.0.0.1",
+      port: 8545,
+      network_id: 5777, //Match Ganache(Truffle) network id
+      gas: 5000000,
+    }
     // Another network with more advanced options...
     // advanced: {
     // port: 8777,             // Custom port
