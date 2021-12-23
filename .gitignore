@@ -4,3 +4,4 @@
 **/*.log
 /build
 .vs_code
+/network_keys

@@ -45,7 +45,7 @@ contract('Hamster', (accounts)=>{
     })
 
     it('minting', async()=>{
-        await hamster._mint(0,user1);
+        await hamster.createAnimals(0,1,{from:admin});
         console.log(" = = ", await hamster.tokenURI(1));
 
 

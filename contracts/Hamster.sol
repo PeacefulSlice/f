@@ -42,7 +42,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     function initialize(
         address _admin
     ) public initializer{
-        // __ERC721_init_unchained(name_,symbol_);
+        __ERC721_init("Hamster","HMS");
         __Context_init_unchained();
         __Pausable_init_unchained();
         __Ownable_init_unchained();
@@ -50,7 +50,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         
         uint256 mhtDecimals = 10**18;
         //hamster
-        animalMintedAmount[0] = 0;
+        // animalMintedAmount[0] = 0;
         animalPrices[0] = 10*mhtDecimals;
         animalSkillUpgradePrices[0][0] = 5*mhtDecimals;
         animalSkillUpgradePrices[0][1] = 10*mhtDecimals;
@@ -58,7 +58,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         animalSkillUpgradePrices[0][3] = 20*mhtDecimals;
         animalHamsterBurnAmount[0] = 1;
         //bull
-        animalMintedAmount[1] = 0;
+        // animalMintedAmount[1] = 0;
         animalPrices[1] = 150*mhtDecimals;
         animalSkillUpgradePrices[1][0] = 75*mhtDecimals;
         animalSkillUpgradePrices[1][1] = 150*mhtDecimals;
@@ -66,7 +66,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         animalSkillUpgradePrices[1][3] = 300*mhtDecimals;
         animalHamsterBurnAmount[1] = 20;
         //bear
-        animalMintedAmount[2] = 0;
+        // animalMintedAmount[2] = 0;
         animalPrices[2] = 150*mhtDecimals;
         animalSkillUpgradePrices[2][0] = 75*mhtDecimals;
         animalSkillUpgradePrices[2][1] = 150*mhtDecimals;
@@ -74,7 +74,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         animalSkillUpgradePrices[2][3] = 300*mhtDecimals;
         animalHamsterBurnAmount[2] = 20;
         //whale
-        animalMintedAmount[3] = 0;
+        // animalMintedAmount[3] = 0;
         animalPrices[3] = 300*mhtDecimals;
         animalSkillUpgradePrices[3][0] = 150*mhtDecimals;
         animalSkillUpgradePrices[3][1] = 300*mhtDecimals;
@@ -102,17 +102,19 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
                              '", "symbol":" ',
                              symbol(),
 
-                             '", "type":" ',
-                             animals[tokenID].name,
+                            //  '", "type":" ',
+                             
                             //  '", "Color and effects":" ',
                             //  animals[tokenID].color_and_effects,
-                             '", "Speed":" ',
+                             '", "description":"',
+                             animals[tokenID].name,
+                             '\\n',
                              animals[tokenID].speed,
-                             '", "Immunity":" ',
+                             '\\n',
                              animals[tokenID].immunity,
-                             '", "Armour":" ',
+                             '\\n',
                              animals[tokenID].armour,
-                             '", "Response":" ',
+                             '\\n',
                              animals[tokenID].response,
                              '"}'
                          )
@@ -127,33 +129,44 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     
 
 //  1) read parameters of specific character
-    function getHeroParameters(uint256 tokenID) public view returns(
-        uint8, 
-        uint64[8] memory,
-        uint8,uint8,uint8,uint32) {
-        
+    function getHeroParameters(uint256 _tokenID) external view returns(
+        uint8,
+        uint8,
+        uint8,
+        uint8,
+        uint32
+        ) {
         return(
-            uint8(animals[tokenID].name),
-            getHeroColorAndEffects(tokenID),
-            animals[tokenID].speed,
-            animals[tokenID].immunity,
-            animals[tokenID].armour,
-            animals[tokenID].response
+            uint8(animals[_tokenID].name),
+            animals[_tokenID].speed,
+            animals[_tokenID].immunity,
+            animals[_tokenID].armour,
+            animals[_tokenID].response
         );
 
     }
-    function getHeroColorAndEffects(uint256 tokenID) public view returns(
-        uint64[8] memory){
-        uint64[8] memory arr;
-        arr[0] = animals[tokenID].color_and_effects[0];
-        arr[1] = animals[tokenID].color_and_effects[1];
-        arr[2] = animals[tokenID].color_and_effects[2];
-        arr[3] = animals[tokenID].color_and_effects[3];
-        arr[4] = animals[tokenID].color_and_effects[4];
-        arr[5] = animals[tokenID].color_and_effects[5];
-        arr[6] = animals[tokenID].color_and_effects[6];
-        arr[7] = animals[tokenID].color_and_effects[7];
-        return(arr);
+    function getHeroColorAndEffects(uint256 _tokenID) external view returns(
+        uint64,
+        uint64,
+        uint64,
+        uint64,
+        uint64,
+        uint64,
+        uint64,
+        uint64
+        ){
+        uint index = 0;
+        uint64[8] memory colordata = animals[_tokenID].color_and_effects;
+        return(
+            colordata[index++],
+            colordata[index++],
+            colordata[index++],
+            colordata[index++],
+            colordata[index++],
+            colordata[index++],
+            colordata[index++],
+            colordata[index++]
+        );
     }
 
 //  2) Renew parameters of specific character
@@ -182,13 +195,17 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     }
 
 //  3)Read default character parameters
-    function readDefaultParameters() public view  returns(
-        uint8, 
-        uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,
-        uint8,uint8,uint8,uint32) {
-        
+    function getDefaultColorAndEffects() external view returns(
+        uint64,
+        uint64,
+        uint64,
+        uint64,
+        uint64,
+        uint64,
+        uint64,
+        uint64
+        ){
         return(
-            uint8(adminAnimal.name),
             adminAnimal.color_and_effects[0],
             adminAnimal.color_and_effects[1],
             adminAnimal.color_and_effects[2],
@@ -196,7 +213,20 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
             adminAnimal.color_and_effects[4],
             adminAnimal.color_and_effects[5],
             adminAnimal.color_and_effects[6],
-            adminAnimal.color_and_effects[7],
+            adminAnimal.color_and_effects[7]
+        );
+    }
+
+
+    function getDefaultParameters() external view  returns(
+        uint8,
+        uint8,
+        uint8,
+        uint8,
+        uint32
+        ) {
+        return(
+            uint8(adminAnimal.name),
             adminAnimal.speed,
             adminAnimal.immunity,
             adminAnimal.armour,
@@ -206,7 +236,6 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
 
 //  4) Renew default character parameters
     function setDefaultAnimalParameters() private{
-
         adminAnimal.color_and_effects[0]=0;
         adminAnimal.color_and_effects[1]=0;
         adminAnimal.color_and_effects[2]=0;
@@ -227,8 +256,6 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
 
 
 
-//  6) Возможность бесплатно сминтить нужное количество персонажей
-//  админом для последующей рассылки пользователям (пресейл или аирдроп) 
 //  6) Opportunity to mint a certain amount of heroes for free(presale or airdrop)
     function createAnimals(uint8 _animalType, uint256 _animalAmount) external onlyOwner {
         require(animalMaxAmount[_animalType] == 0 || animalMaxAmount[_animalType] >= animalMintedAmount[_animalType] + _animalAmount, "Can't mint that much of animals");
@@ -261,6 +288,11 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
 
         
     }
+
+    // function buyMint(uint8 _animalType, address _to) external onlyShop{
+
+    // }
+
     // Апгрейды
 // 7) Обновление параметров конкретного персонажа заплатив токеном MHT (юзер)
     // function upgradeSpeed(uint256 tokenID) public {
