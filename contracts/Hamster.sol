@@ -24,7 +24,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         uint64[8] color_and_effects;
         uint8 speed; 
         uint8 immunity;
-        uint8 armour;
+        uint8 armor;
         uint32 response;
         // mapping (uint256 => bool) items;
     }
@@ -50,7 +50,6 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         
         uint256 mhtDecimals = 10**18;
         //hamster
-        // animalMintedAmount[0] = 0;
         animalPrices[0] = 10*mhtDecimals;
         animalSkillUpgradePrices[0][0] = 5*mhtDecimals;
         animalSkillUpgradePrices[0][1] = 10*mhtDecimals;
@@ -58,7 +57,6 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         animalSkillUpgradePrices[0][3] = 20*mhtDecimals;
         animalHamsterBurnAmount[0] = 1;
         //bull
-        // animalMintedAmount[1] = 0;
         animalPrices[1] = 150*mhtDecimals;
         animalSkillUpgradePrices[1][0] = 75*mhtDecimals;
         animalSkillUpgradePrices[1][1] = 150*mhtDecimals;
@@ -66,7 +64,6 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         animalSkillUpgradePrices[1][3] = 300*mhtDecimals;
         animalHamsterBurnAmount[1] = 20;
         //bear
-        // animalMintedAmount[2] = 0;
         animalPrices[2] = 150*mhtDecimals;
         animalSkillUpgradePrices[2][0] = 75*mhtDecimals;
         animalSkillUpgradePrices[2][1] = 150*mhtDecimals;
@@ -88,8 +85,12 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     function unpause() external onlyOwner {
         _unpause();
     }
-    function tokenURI(uint256 tokenID) public view virtual override returns(string memory){
-        require(_exists(tokenID),"That hero doesn`t exist");
+    function tokenURI(uint256 _tokenID) public view virtual override returns(string memory){
+        require(_exists(_tokenID),"That hero doesn`t exist");
+        // uint index = 0;
+        // uint64[8] memory colordata = animals[_tokenID].color_and_effects;
+        string memory _link = getAnimalPhoto(uint8(animals[_tokenID].name));
+            
         return
             string(
                 abi.encodePacked(
@@ -101,21 +102,54 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
                              name(),
                              '", "symbol":" ',
                              symbol(),
+                             '", "image":" ',
+                             _link,
 
-                            //  '", "type":" ',
                              
-                            //  '", "Color and effects":" ',
-                            //  animals[tokenID].color_and_effects,
-                             '", "description":"',
-                             animals[tokenID].name,
-                             '\\n',
-                             animals[tokenID].speed,
-                             '\\n',
-                             animals[tokenID].immunity,
-                             '\\n',
-                             animals[tokenID].armour,
-                             '\\n',
-                             animals[tokenID].response,
+
+                            '", "properties": [ ',
+
+                            '{ "trait_type": "',
+                            'Type',
+                            '","value": "',
+                            animals[_tokenID].name,
+                            '"},',
+
+                            // '{ "trait_type": "',
+                            // 'Color_and_effects',
+                            // '","value": "',
+                            // colordata[index++],
+                            // colordata[index++],
+                            // colordata[index++],
+                            // colordata[index++],
+                            // colordata[index++],
+                            // colordata[index++],
+                            // colordata[index++],
+                            // colordata[index++],
+                            // '"},',
+
+
+
+                            '{ "trait_type": "',
+                            'Speed',
+                            '","value": "',
+                            animals[_tokenID].speed,
+                            '"},',
+                            '{ "trait_type": "',
+                            'Immunity',
+                            '","value": "',
+                            animals[_tokenID].immunity,
+                            '"},',
+                            '{ "trait_type": "',
+                            'Armor',
+                            '","value": "',
+                            animals[_tokenID].armor,
+                            '"},',
+                            '{ "trait_type": "',
+                            'Response',
+                            '","value": "',
+                            animals[_tokenID].response,
+                            '"} ]',
                              '"}'
                          )
                      )
@@ -124,6 +158,13 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
             );
 
 
+    }
+    function getAnimalPhoto(uint8 _animalType) public pure returns (string memory){
+        string memory _link ="";
+        if(_animalType==0){
+            _link = "https://ru.wikipedia.org/wiki/%D0%A5%D0%BE%D0%BC%D1%8F%D0%BA%D0%B8#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Pearl_Winter_White_Russian_Dwarf_Hamster_-_Front.jpg";
+        }
+        return _link;
     }
     
     
@@ -140,7 +181,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
             uint8(animals[_tokenID].name),
             animals[_tokenID].speed,
             animals[_tokenID].immunity,
-            animals[_tokenID].armour,
+            animals[_tokenID].armor,
             animals[_tokenID].response
         );
 
@@ -176,7 +217,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         uint64[8] memory _color_and_effects,
         uint8 _speed,
         uint8 _immunity,
-        uint8 _armour,
+        uint8 _armor,
         uint32 _response
         ) private {
         animals[_tokenID].name = AnimalType(_animalType);
@@ -190,7 +231,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         animals[_tokenID].color_and_effects[7]=_color_and_effects[7];
         animals[_tokenID].speed = _speed;
         animals[_tokenID].immunity = _immunity;
-        animals[_tokenID].armour = _armour;
+        animals[_tokenID].armor = _armor;
         animals[_tokenID].response = _response;
     }
 
@@ -229,7 +270,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
             uint8(adminAnimal.name),
             adminAnimal.speed,
             adminAnimal.immunity,
-            adminAnimal.armour,
+            adminAnimal.armor,
             adminAnimal.response
             );
     }
@@ -247,7 +288,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         
         adminAnimal.speed = 0;
         adminAnimal.immunity = 0;
-        adminAnimal.armour = 4;
+        adminAnimal.armor = 4;
         adminAnimal.response = 2000;
 
     }
@@ -283,7 +324,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         
         animals[_tokenID].speed = adminAnimal.speed;
         animals[_tokenID].immunity = adminAnimal.immunity;
-        animals[_tokenID].armour = adminAnimal.armour;
+        animals[_tokenID].armor = adminAnimal.armor;
         animals[_tokenID].response = adminAnimal.response;
 
         
@@ -309,11 +350,11 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     //     animals[tokenID].immunity++;
     // } 
 
-    // function upgradeArmour(uint256 tokenID) public {
-    //     uint8 _level = 4 - animals[tokenID].armour;
+    // function upgradearmor(uint256 tokenID) public {
+    //     uint8 _level = 4 - animals[tokenID].armor;
     //     require((_level>0)&&(_level<=4),'level is not in boundaries');
-    //     require((balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[tokenID].name)][_level]),'not enough money for Armour upgrade');
-    //     animals[tokenID].armour--;
+    //     require((balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[tokenID].name)][_level]),'not enough money for armor upgrade');
+    //     animals[tokenID].armor--;
     // } 
 
     // function upgradeResponse(uint256 tokenID) public {
