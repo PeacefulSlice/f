@@ -6,8 +6,11 @@
 // import "./../contracts-upgradeable/security/PausableUpgradeable.sol";
 // import "./../contracts-upgradeable/proxy/utils/Initializable.sol";
 // import "./../contracts-upgradeable/metatx/ERC2771ContextUpgradeable.sol";
-// import "./../interfaces/IHamster.sol";
 
+
+// interface IToken {
+//     function decimals() external view returns(uint8);
+// }
 
 
 // contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable, ERC2771ContextUpgradeable {
@@ -17,6 +20,8 @@
 
 //     bytes32 public constant USER_ROLE = keccak256("USER_ROLE");
 
+//     mapping(uint8 => uint256) animalPrices;
+//     mapping(uint8 => mapping(uint8 => uint256)) animalSkillUpgradePrices;
 
 //     function _msgSender() internal override(ContextUpgradeable, ERC2771ContextUpgradeable) view returns (address) {
 //         return ERC2771ContextUpgradeable._msgSender();
@@ -37,21 +42,38 @@
 //         tokenMHT = _tokenMHT;
 
 
-
+       
+//         //hamster
+//         animalPrices[0] = 10*IToken(tokenMHT).decimals;
+//         animalSkillUpgradePrices[0][0] = 5*IToken(tokenMHT).decimals;
+//         animalSkillUpgradePrices[0][1] = 10*IToken(tokenMHT).decimals;
+//         animalSkillUpgradePrices[0][2] = 15*IToken(tokenMHT).decimals;
+//         animalSkillUpgradePrices[0][3] = 20*IToken(tokenMHT).decimals;
+//         //bull
+//         animalPrices[1] = 150*IToken(tokenMHT).decimals;
+//         animalSkillUpgradePrices[1][0] = 75*IToken(tokenMHT).decimals;
+//         animalSkillUpgradePrices[1][1] = 150*IToken(tokenMHT).decimals;
+//         animalSkillUpgradePrices[1][2] = 225*IToken(tokenMHT).decimals;
+//         animalSkillUpgradePrices[1][3] = 300*IToken(tokenMHT).decimals;
+//         //bear
+//         animalPrices[2] = 150*IToken(tokenMHT).decimals;
+//         animalSkillUpgradePrices[2][0] = 75*IToken(tokenMHT).decimals;
+//         animalSkillUpgradePrices[2][1] = 150*IToken(tokenMHT).decimals;
+//         animalSkillUpgradePrices[2][2] = 225*IToken(tokenMHT).decimals;
+//         animalSkillUpgradePrices[2][3] = 300*IToken(tokenMHT).decimals;
+//         //whale
+//         // animalMintedAmount[3] = 0;
+//         animalPrices[3] = 300*IToken(tokenMHT).decimals;
+//         animalSkillUpgradePrices[3][0] = 150*IToken(tokenMHT).decimals;
+//         animalSkillUpgradePrices[3][1] = 300*IToken(tokenMHT).decimals;
+//         animalSkillUpgradePrices[3][2] = 450*IToken(tokenMHT).decimals;
+//         animalSkillUpgradePrices[3][3] = 600*IToken(tokenMHT).decimals;
 //     }
 
 //     function setTokenMHT(address _tokenMHT) external onlyAdmin{
 //         tokenMHT = _tokenMHT;
 
 //     }
-
-//     // function _mintAnimal(uint256 _tokenID, uint256 _amount) public onlyAdmin{
-//     //     _mintAnimal(_tokenID, _amount);
-//     // }
-//     // function 
-
-    
-
 
 
 //     modifier onlyAdmin() {
@@ -80,4 +102,38 @@
 //         Hamster(_address).upgrade(_tokenID);
 //     }
 
+    
+//     // 7) Upgrade parameters of hero 
+// // 7) Обновление параметров конкретного персонажа заплатив токеном MHT (юзер)
+//     function upgradeSpeed(uint256 _tokenID) public {
+//         uint8 _level = animals[_tokenID].speed;
+//         require((_level>=0)&&(_level<4),'level is not in boundaries');
+//         require((tokenMHT.balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[_tokenID].name)][_level]),'not enough money for Speed upgrade');
+//         animals[_tokenID].speed++;
+//     } 
+
+//     function upgradeImmunity(uint256 _tokenID) public {
+//         uint8 _level = animals[_tokenID].immunity;
+//         require((_level>=0)&&(_level<4),'level is not in boundaries');
+//         require((tokenMHT.balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[_tokenID].name)][_level]),'not enough money for Immunity upgrade');
+//         animals[_tokenID].immunity++;
+//     } 
+
+//     function upgradearmor(uint256 _tokenID) public {
+//         uint8 _level = 4 - animals[_tokenID].armor;
+//         require((_level>0)&&(_level<=4),'level is not in boundaries');
+//         require((tokenMHT.balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[_tokenID].name)][_level]),'not enough money for armor upgrade');
+//         animals[_tokenID].armor--;
+//     } 
+
+//     function upgradeResponse(uint256 _tokenID) public {
+//         uint8 _level = uint8(animals[_tokenID].response/500);
+//         require((_level>0)&&(_level<=4),'level is not in boundaries');
+//         require((tokenMHT.balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[_tokenID].name)][_level]),'not enough money for Response upgrade');
+//         animals[_tokenID].response -= 500;
+//     }
+
+//    // function buyMint(uint8 _animalType, address _to) external onlyShop{
+
+//     // }
 // }

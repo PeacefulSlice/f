@@ -1,4 +1,4 @@
-// SPDX-License-IDentifier: MIT
+
 pragma solidity ^0.8.0;
 
 import "../contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
@@ -6,7 +6,8 @@ import "../base64-sol/base64.sol";
 import "../contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "../contracts-upgradeable/proxy/utils/Initializable.sol";
-import '../contracts-upgradeable/access/OwnableUpgradeable.sol';
+import "../contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "../openzeppelin-contracts/utils/Strings.sol";
 
 contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, OwnableUpgradeable, PausableUpgradeable {
 
@@ -19,6 +20,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     Animal public adminAnimal; // Animal template for token 
     uint256 private lastMintedTokenID;
 
+// 
     struct Animal{
         AnimalType name;
         uint64[8] color_and_effects;
@@ -26,7 +28,6 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         uint8 immunity;
         uint8 armor;
         uint32 response;
-        // mapping (uint256 => bool) items;
     }
 
     // contract limit parameters
@@ -42,7 +43,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     function initialize(
         address _admin
     ) public initializer{
-        __ERC721_init("Hamster","HMS");
+        __ERC721_init("MarketHero","MKH");
         __Context_init_unchained();
         __Pausable_init_unchained();
         __Ownable_init_unchained();
@@ -87,10 +88,13 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     }
     function tokenURI(uint256 _tokenID) public view virtual override returns(string memory){
         require(_exists(_tokenID),"That hero doesn`t exist");
-        // uint index = 0;
-        // uint64[8] memory colordata = animals[_tokenID].color_and_effects;
+ 
         string memory _link = getAnimalPhoto(uint8(animals[_tokenID].name));
-            
+        string memory _name = Strings.toString(uint8(animals[_tokenID].name));
+        string memory _speed = Strings.toString(animals[_tokenID].speed);
+        string memory _immunity = Strings.toString(animals[_tokenID].immunity);
+        string memory _armor = Strings.toString(animals[_tokenID].armor);
+        string memory _response = Strings.toString(animals[_tokenID].response);
         return
             string(
                 abi.encodePacked(
@@ -100,57 +104,28 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
                          abi.encodePacked(
                              '{"name":"',
                              name(),
-                             '", "symbol":" ',
-                             symbol(),
-                             '", "image":" ',
-                             _link,
+                            '","description": "Animal for Market Hero ',  
 
-                             
-
-                            '", "properties": [ ',
-
-                            '{ "trait_type": "',
-                            'Type',
-                            '","value": "',
-                            animals[_tokenID].name,
-                            '"},',
-
-                            // '{ "trait_type": "',
-                            // 'Color_and_effects',
-                            // '","value": "',
-                            // colordata[index++],
-                            // colordata[index++],
-                            // colordata[index++],
-                            // colordata[index++],
-                            // colordata[index++],
-                            // colordata[index++],
-                            // colordata[index++],
-                            // colordata[index++],
-                            // '"},',
-
-
-
-                            '{ "trait_type": "',
-                            'Speed',
-                            '","value": "',
-                            animals[_tokenID].speed,
-                            '"},',
-                            '{ "trait_type": "',
-                            'Immunity',
-                            '","value": "',
-                            animals[_tokenID].immunity,
-                            '"},',
-                            '{ "trait_type": "',
-                            'Armor',
-                            '","value": "',
-                            animals[_tokenID].armor,
-                            '"},',
-                            '{ "trait_type": "',
-                            'Response',
-                            '","value": "',
-                            animals[_tokenID].response,
-                            '"} ]',
-                             '"}'
+                            '", "image": "',
+                            _link,
+                            
+                            '", "attributes": [ ',
+                                '{ "trait_type": "Type","value": "',
+                                _name,
+                                '"},',
+                                '{ "trait_type": "Speed","value": "',
+                                _speed,
+                                '"},',
+                                '{ "trait_type": "Immunity","value": "',
+                                _immunity,
+                                '"},',
+                                '{ "trait_type": "Armor","value": "',
+                                _armor,
+                                '"},',
+                                '{ "trait_type": "Response","value": "',
+                                _response,
+                                '"} ]',
+                             '}'
                          )
                      )
                  )   
@@ -162,13 +137,10 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     function getAnimalPhoto(uint8 _animalType) public pure returns (string memory){
         string memory _link ="";
         if(_animalType==0){
-            _link = "https://ru.wikipedia.org/wiki/%D0%A5%D0%BE%D0%BC%D1%8F%D0%BA%D0%B8#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Pearl_Winter_White_Russian_Dwarf_Hamster_-_Front.jpg";
+            _link = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Pearl_Winter_White_Russian_Dwarf_Hamster_-_Front.jpg/1920px-Pearl_Winter_White_Russian_Dwarf_Hamster_-_Front.jpg";
         }
         return _link;
     }
-    
-    
-
 //  1) read parameters of specific character
     function getHeroParameters(uint256 _tokenID) external view returns(
         uint8,
@@ -293,9 +265,6 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
 
     }
 
-//  5) Возможность сминтить персонажа заплатив токен МНТ
-
-
 
 //  6) Opportunity to mint a certain amount of heroes for free(presale or airdrop)
     function createAnimals(uint8 _animalType, uint256 _animalAmount) external onlyOwner {
@@ -330,39 +299,9 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         
     }
 
-    // function buyMint(uint8 _animalType, address _to) external onlyShop{
+ 
 
-    // }
-
-    // Апгрейды
-// 7) Обновление параметров конкретного персонажа заплатив токеном MHT (юзер)
-    // function upgradeSpeed(uint256 tokenID) public {
-    //     uint8 _level = animals[tokenID].speed;
-    //     require((_level>=0)&&(_level<4),'level is not in boundaries');
-    //     require((balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[tokenID].name)][_level]),'not enough money for Speed upgrade');
-    //     animals[tokenID].speed++;
-    // } 
-
-    // function upgradeImmunity(uint256 tokenID) public {
-    //     uint8 _level = animals[tokenID].immunity;
-    //     require((_level>=0)&&(_level<4),'level is not in boundaries');
-    //     require((balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[tokenID].name)][_level]),'not enough money for Immunity upgrade');
-    //     animals[tokenID].immunity++;
-    // } 
-
-    // function upgradearmor(uint256 tokenID) public {
-    //     uint8 _level = 4 - animals[tokenID].armor;
-    //     require((_level>0)&&(_level<=4),'level is not in boundaries');
-    //     require((balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[tokenID].name)][_level]),'not enough money for armor upgrade');
-    //     animals[tokenID].armor--;
-    // } 
-
-    // function upgradeResponse(uint256 tokenID) public {
-    //     uint8 _level = uint8(animals[tokenID].response/500);
-    //     require((_level>0)&&(_level<=4),'level is not in boundaries');
-    //     require((balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[tokenID].name)][_level]),'not enough money for Response upgrade');
-    //     animals[tokenID].response -= 500;
-    // }
+ 
 
 
 
@@ -370,7 +309,6 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
 
 
 }
-
 
 
 
