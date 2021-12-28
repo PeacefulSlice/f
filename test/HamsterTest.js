@@ -10,7 +10,7 @@ const TestToken = artifacts.require('TestToken');
 const PProxy = artifacts.require('PProxy');
 const PProxyAdmin = artifacts.require('PProxyAdmin');
 const Hamster = artifacts.require('Hamster');
-const Shop = artifacts.require('Shop');
+// const Shop = artifacts.require('Shop');
 
 function toBN(number){
     return web3.utils.toBN(number);
@@ -47,7 +47,20 @@ contract('Hamster', (accounts)=>{
     it('minting', async()=>{
         await hamster.createAnimals(0,1,{from:admin});
         console.log(" = = ", await hamster.tokenURI(1));
+        // console.log("",await hamster.getHeroColorAndEffects(1,{from:admin}));
 
+        console.log(" = = ", await hamster.name());
+        console.log(" = = ", await hamster.symbol());
+        let Data = await hamster.getHeroParameters(1,{from:admin});
+       
+        let ind =0;
+        console.log("Name = ",Data[ind++].toString());
+        console.log("Speed = ",Data[ind++].toString());
+        console.log("Immunity = ",Data[ind++].toString());
+        console.log("Armor = ",Data[ind++].toString());
+        console.log("Response = ",Data[ind++].toString());
+        
+        
 
     })
 })

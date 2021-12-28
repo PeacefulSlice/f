@@ -26,7 +26,6 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         uint8 immunity;
         uint8 armor;
         uint32 response;
-        // mapping (uint256 => bool) items;
     }
 
     // contract limit parameters
@@ -42,7 +41,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     function initialize(
         address _admin
     ) public initializer{
-        __ERC721_init("Hamster","HMS");
+        __ERC721_init("Animal","HMS");
         __Context_init_unchained();
         __Pausable_init_unchained();
         __Ownable_init_unchained();
@@ -89,7 +88,9 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         require(_exists(_tokenID),"That hero doesn`t exist");
         // uint index = 0;
         // uint64[8] memory colordata = animals[_tokenID].color_and_effects;
-        string memory _link = getAnimalPhoto(uint8(animals[_tokenID].name));
+        // string memory _link = getAnimalPhoto(uint8(animals[_tokenID].name));
+        string memory _link =  "https://lh3.googleusercontent.com/proxy/he1NZKuKIe1owm7o8pRiCym4mpEFt_YnEkRt8i-95Ecwg7SYByqGAITwMVUrtQdJlUgrf3OCShKv9iCRe8L3CaM";
+
             
         return
             string(
@@ -98,20 +99,15 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
                  Base64.encode(
                      bytes(
                          abi.encodePacked(
-                             '{"name":"',
-                             name(),
-                             '", "symbol":" ',
-                             symbol(),
+                            //  '{"name":"',
+                            //  name(),
+                            //  '", "symbol":" ',
+                            //  symbol(),
+                            '{"description": "Animal for Market Hero ',  
                              '", "image":" ',
                              _link,
 
-                             
-
-                            '", "properties": [ ',
-
-                            '{ "trait_type": "',
-                            'Type',
-                            '","value": "',
+                            '", "attributes": [ { "trait_type": "Type","value": "',
                             animals[_tokenID].name,
                             '"},',
 
@@ -128,26 +124,19 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
                             // colordata[index++],
                             // '"},',
 
-
-
-                            '{ "trait_type": "',
-                            'Speed',
-                            '","value": "',
+                            '{ "trait_type": "Speed","value": "',
                             animals[_tokenID].speed,
                             '"},',
-                            '{ "trait_type": "',
-                            'Immunity',
-                            '","value": "',
+
+                            '{ "trait_type": "Immunity","value": "',
                             animals[_tokenID].immunity,
                             '"},',
-                            '{ "trait_type": "',
-                            'Armor',
-                            '","value": "',
+                            
+                            '{ "trait_type": "Armor","value": "',
                             animals[_tokenID].armor,
                             '"},',
-                            '{ "trait_type": "',
-                            'Response',
-                            '","value": "',
+
+                            '{ "trait_type": "Response","value": "',
                             animals[_tokenID].response,
                             '"} ]',
                              '"}'
@@ -162,7 +151,9 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     function getAnimalPhoto(uint8 _animalType) public pure returns (string memory){
         string memory _link ="";
         if(_animalType==0){
-            _link = "https://ru.wikipedia.org/wiki/%D0%A5%D0%BE%D0%BC%D1%8F%D0%BA%D0%B8#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Pearl_Winter_White_Russian_Dwarf_Hamster_-_Front.jpg";
+            _link = "https://lh3.googleusercontent.com/proxy/he1NZKuKIe1owm7o8pRiCym4mpEFt_YnEkRt8i-95Ecwg7SYByqGAITwMVUrtQdJlUgrf3OCShKv9iCRe8L3CaM";
+                  
+            // _link = "https://ru.wikipedia.org/wiki/%D0%A5%D0%BE%D0%BC%D1%8F%D0%BA%D0%B8#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Pearl_Winter_White_Russian_Dwarf_Hamster_-_Front";
         }
         return _link;
     }
