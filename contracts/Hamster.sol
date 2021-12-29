@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import "../contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "../base64-sol/base64.sol";
 import "../contracts-upgradeable/security/PausableUpgradeable.sol";
-import "../contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "../contracts-upgradeable/proxy/utils/Initializable.sol";
 import "../contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../openzeppelin-contracts/utils/Strings.sol";
@@ -33,8 +32,6 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     // contract limit parameters
     mapping(uint8 => uint32) animalMaxAmount;
     mapping(uint8 => uint64) animalMintedAmount;
-    mapping(uint8 => uint256) animalPrices;
-    mapping(uint8 => mapping(uint8 => uint256)) animalSkillUpgradePrices;
     mapping(uint8 => uint256) animalHamsterBurnAmount;
 
     // NFT Tokens
@@ -48,36 +45,14 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         __Pausable_init_unchained();
         __Ownable_init_unchained();
         transferOwnership(_admin);
-        
-        uint256 mhtDecimals = 10**18;
+
         //hamster
-        animalPrices[0] = 10*mhtDecimals;
-        animalSkillUpgradePrices[0][0] = 5*mhtDecimals;
-        animalSkillUpgradePrices[0][1] = 10*mhtDecimals;
-        animalSkillUpgradePrices[0][2] = 15*mhtDecimals;
-        animalSkillUpgradePrices[0][3] = 20*mhtDecimals;
         animalHamsterBurnAmount[0] = 1;
         //bull
-        animalPrices[1] = 150*mhtDecimals;
-        animalSkillUpgradePrices[1][0] = 75*mhtDecimals;
-        animalSkillUpgradePrices[1][1] = 150*mhtDecimals;
-        animalSkillUpgradePrices[1][2] = 225*mhtDecimals;
-        animalSkillUpgradePrices[1][3] = 300*mhtDecimals;
         animalHamsterBurnAmount[1] = 20;
         //bear
-        animalPrices[2] = 150*mhtDecimals;
-        animalSkillUpgradePrices[2][0] = 75*mhtDecimals;
-        animalSkillUpgradePrices[2][1] = 150*mhtDecimals;
-        animalSkillUpgradePrices[2][2] = 225*mhtDecimals;
-        animalSkillUpgradePrices[2][3] = 300*mhtDecimals;
         animalHamsterBurnAmount[2] = 20;
         //whale
-        // animalMintedAmount[3] = 0;
-        animalPrices[3] = 300*mhtDecimals;
-        animalSkillUpgradePrices[3][0] = 150*mhtDecimals;
-        animalSkillUpgradePrices[3][1] = 300*mhtDecimals;
-        animalSkillUpgradePrices[3][2] = 450*mhtDecimals;
-        animalSkillUpgradePrices[3][3] = 600*mhtDecimals;
         animalHamsterBurnAmount[3] = 50;
     }
     function pause() external onlyOwner {
@@ -98,37 +73,37 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         return
             string(
                 abi.encodePacked(
-                 "data:application/json;base64, ",
-                 Base64.encode(
-                     bytes(
-                         abi.encodePacked(
-                             '{"name":"',
-                             name(),
-                            '","description": "Animal for Market Hero ',  
+                    "data:application/json;base64, ",
+                    Base64.encode(
+                        bytes(
+                            abi.encodePacked(
+                                '{"name":"',
+                                name(),
+                                '","description": "Animal for Market Hero ',  
 
-                            '", "image": "',
-                            _link,
-                            
-                            '", "attributes": [ ',
-                                '{ "trait_type": "Type","value": "',
-                                _name,
-                                '"},',
-                                '{ "trait_type": "Speed","value": "',
-                                _speed,
-                                '"},',
-                                '{ "trait_type": "Immunity","value": "',
-                                _immunity,
-                                '"},',
-                                '{ "trait_type": "Armor","value": "',
-                                _armor,
-                                '"},',
-                                '{ "trait_type": "Response","value": "',
-                                _response,
-                                '"} ]',
-                             '}'
-                         )
-                     )
-                 )   
+                                '", "image": "',
+                                _link,
+                                
+                                '", "attributes": [ ',
+                                    '{ "trait_type": "Type","value": "',
+                                    _name,
+                                    '"},',
+                                    '{ "trait_type": "Speed","value": "',
+                                    _speed,
+                                    '"},',
+                                    '{ "trait_type": "Immunity","value": "',
+                                    _immunity,
+                                    '"},',
+                                    '{ "trait_type": "Armor","value": "',
+                                    _armor,
+                                    '"},',
+                                    '{ "trait_type": "Response","value": "',
+                                    _response,
+                                    '"} ]',
+                                '}'
+                            )
+                        )
+                    )   
                 )
             );
 
