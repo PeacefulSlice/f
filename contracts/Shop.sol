@@ -107,53 +107,51 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable {
 
         IERC20Upgradeable(tokenMHT).safeTransferFrom(_msgSender(), address(this), animalPrices[_animalType]);
 
-        // Hamster(_address).buyMint(_animalType, _msgSender());
+        Hamster(hamsterContract)._mintAnimal(_animalType, _msgSender());
         
     }
 
-    // function upgradeSpecificTrait(uint256 _tokenID, uint8 _trait) external {
-    //     uint8 _level = 0;
-    //     uint8 _name = uint8(hamsterContract.animals[_tokenID].name);
-    //     // Calculating level of trait
-    //     // Speed
-    //     if (_trait==0){
-    //         _level = hamsterContract.animals[_tokenID].speed;
-    //     } else
-    //     // Immunity
-    //     if (_trait==1){
-    //         _level = hamsterContract.animals[_tokenID].immunity;
-    //     } else
-    //     // Armor
-    //     if (_trait==2){
-    //         _level = 4-hamsterContract.animals[_tokenID].armor;
-    //     } else
-    //     // Speed
-    //     if (_trait==3){
-    //         _level = 4 - (hamsterContract.animals[_tokenID].speed)/500 ;
-    //     } 
-    //     require (((_level>=0)&&(_level<3)),"level is not in boundaries");
-    //     require ((IERC20Upgradeable(tokenMHT).balanceOf(_msgSender())>=animalSkillUpgradePrices[_name][_level]),"");
-    //     IERC20Upgradeable(tokenMHT).safeTransferFrom(_msgSender(), address(this), animalSkillUpgradePrices[_name][_level]);
-    //     // Upgrading trait
-    //     // Speed
-    //     if (_trait==0){
-    //         hamsterContract.animals[_tokenID].speed += 1;
-    //     } else
-    //     // Immunity
-    //     if (_trait==1){
-    //         hamsterContract.animals[_tokenID].immunity += 1;
-    //     } else
-    //     // Armor
-    //     if (_trait==2){
-    //         hamsterContract.animals[_tokenID].armor -= 1;
-    //     } else
-    //     // Speed
-    //     if (_trait==3){
-    //         hamsterContract.animals[_tokenID].speed -= 500 ;
-    //     } 
-
-
-    // }
+    function upgradeSpecificTrait(uint256 _tokenID, uint8 _trait) external {
+        uint8 _level = 0;
+        uint8 _name = uint8(Hamster(hamsterContract).animals[_tokenID].name);
+        // Calculating level of trait
+        // Speed
+        if (_trait==0){
+            _level = Hamster(hamsterContract).animals[_tokenID].speed;
+        } else
+        // Immunity
+        if (_trait==1){
+            _level = Hamster(hamsterContract).animals[_tokenID].immunity;
+        } else
+        // Armor
+        if (_trait==2){
+            _level = 4-Hamster(hamsterContract).animals[_tokenID].armor;
+        } else
+        // Speed
+        if (_trait==3){
+            _level = 4 - (Hamster(hamsterContract).animals[_tokenID].speed)/500 ;
+        } 
+        require (((_level>=0)&&(_level<3)),"level is not in boundaries");
+        require ((IERC20Upgradeable(tokenMHT).balanceOf(_msgSender())>=animalSkillUpgradePrices[_name][_level]),"");
+        IERC20Upgradeable(tokenMHT).safeTransferFrom(_msgSender(), address(this), animalSkillUpgradePrices[_name][_level]);
+        // Upgrading trait
+        // Speed
+        if (_trait==0){
+            Hamster(hamsterContract).animals[_tokenID].speed += 1;
+        } else
+        // Immunity
+        if (_trait==1){
+            Hamster(hamsterContract).animals[_tokenID].immunity += 1;
+        } else
+        // Armor
+        if (_trait==2){
+            Hamster(hamsterContract).animals[_tokenID].armor -= 1;
+        } else
+        // Speed
+        if (_trait==3){
+            Hamster(hamsterContract).animals[_tokenID].speed -= 500 ;
+        } 
+    }
 
 
 
