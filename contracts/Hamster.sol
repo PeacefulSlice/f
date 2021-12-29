@@ -10,6 +10,8 @@ import "../openzeppelin-contracts/utils/Strings.sol";
 
 contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, OwnableUpgradeable, PausableUpgradeable {
 
+    address public verifiedContract;
+
    enum AnimalType{
         Hamster,
         Bull,
@@ -35,10 +37,11 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     mapping(uint8 => uint256) animalHamsterBurnAmount;
 
     // NFT Tokens
-    mapping(uint256 => Animal) animals;
+    mapping(uint256 => Animal) public animals;
     
     function initialize(
-        address _admin
+        address _admin,
+        address _shop
     ) public initializer{
         __ERC721_init("MarketHero","MKH");
         __Context_init_unchained();
@@ -46,6 +49,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         __Ownable_init_unchained();
         transferOwnership(_admin);
 
+        verifiedContract = _shop;
         //hamster
         animalHamsterBurnAmount[0] = 1;
         //bull
@@ -117,7 +121,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         return _link;
     }
 //  1) read parameters of specific character
-    function getHeroParameters(uint256 _tokenID) external view returns(
+    function getHeroParameters(uint256 _tokenID) public view returns(
         uint8,
         uint8,
         uint8,
@@ -133,7 +137,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         );
 
     }
-    function getHeroColorAndEffects(uint256 _tokenID) external view returns(
+    function getHeroColorAndEffects(uint256 _tokenID) public view returns(
         uint64,
         uint64,
         uint64,
@@ -158,29 +162,72 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     }
 
 //  2) Renew parameters of specific character
-    function renewAnimalParameters(
+    function _renewAnimalParameters(
         uint256 _tokenID,
         uint8 _animalType,
-        uint64[8] memory _color_and_effects,
+        // uint64[8] memory _color_and_effects,
         uint8 _speed,
         uint8 _immunity,
         uint8 _armor,
         uint32 _response
         ) private {
         animals[_tokenID].name = AnimalType(_animalType);
-        animals[_tokenID].color_and_effects[0]=_color_and_effects[0];
-        animals[_tokenID].color_and_effects[1]=_color_and_effects[1];
-        animals[_tokenID].color_and_effects[2]=_color_and_effects[2];
-        animals[_tokenID].color_and_effects[3]=_color_and_effects[3];
-        animals[_tokenID].color_and_effects[4]=_color_and_effects[4];
-        animals[_tokenID].color_and_effects[5]=_color_and_effects[5];
-        animals[_tokenID].color_and_effects[6]=_color_and_effects[6];
-        animals[_tokenID].color_and_effects[7]=_color_and_effects[7];
+        // animals[_tokenID].color_and_effects[0]=_color_and_effects[0];
+        // animals[_tokenID].color_and_effects[1]=_color_and_effects[1];
+        // animals[_tokenID].color_and_effects[2]=_color_and_effects[2];
+        // animals[_tokenID].color_and_effects[3]=_color_and_effects[3];
+        // animals[_tokenID].color_and_effects[3]=_color_and_effects[3];
+        // animals[_tokenID].color_and_effects[3]=_color_and_effects[3];
+        // animals[_tokenID].color_and_effects[4]=_color_and_effects[4];
+        // animals[_tokenID].color_and_effects[5]=_color_and_effects[5];
+        // animals[_tokenID].color_and_effects[6]=_color_and_effects[6];
+        // animals[_tokenID].color_and_effects[7]=_color_and_effects[7];
         animals[_tokenID].speed = _speed;
         animals[_tokenID].immunity = _immunity;
         animals[_tokenID].armor = _armor;
         animals[_tokenID].response = _response;
     }
+    function _renewAnimalColorAndEffects(
+        uint256 _tokenID
+        )private{
+            uint64[8] memory _color_and_effects;
+            (
+                _color_and_effects[0],
+                _color_and_effects[1],
+                _color_and_effects[2],
+                _color_and_effects[3],
+                _color_and_effects[4],
+                _color_and_effects[5],
+                _color_and_effects[6],
+                _color_and_effects[7]) = getHeroColorAndEffects(_tokenID);
+                
+            animals[_tokenID].color_and_effects[0]=_color_and_effects[0];
+            animals[_tokenID].color_and_effects[1]=_color_and_effects[1];
+            animals[_tokenID].color_and_effects[2]=_color_and_effects[2];
+            animals[_tokenID].color_and_effects[3]=_color_and_effects[3];
+            animals[_tokenID].color_and_effects[3]=_color_and_effects[3];
+            animals[_tokenID].color_and_effects[3]=_color_and_effects[3];
+            animals[_tokenID].color_and_effects[4]=_color_and_effects[4];
+            animals[_tokenID].color_and_effects[5]=_color_and_effects[5];
+            animals[_tokenID].color_and_effects[6]=_color_and_effects[6];
+            animals[_tokenID].color_and_effects[7]=_color_and_effects[7];
+    }
+
+    function renewAnimalParameters(
+        uint256 _tokenID,
+        uint8 _animalType,
+        uint8 _speed,
+        uint8 _immunity,
+        uint8 _armor,
+        uint32 _response
+        )external {
+            require(_msgSender() == verifiedContract, "");
+            animals[_tokenID].name = AnimalType(_animalType);
+            animals[_tokenID].speed = _speed;
+            animals[_tokenID].immunity = _immunity;
+            animals[_tokenID].armor = _armor;
+            animals[_tokenID].response = _response;
+        }
 
 //  3)Read default character parameters
     function getDefaultColorAndEffects() external view returns(
@@ -272,6 +319,11 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         animals[_tokenID].response = adminAnimal.response;
 
         
+    }
+
+    function mintAnimal(uint8 _animalType, address _to) external {
+        require(_msgSender() == verifiedContract, "");
+        _mintAnimal(_animalType, _to);
     }
 
  

@@ -36,8 +36,6 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable {
         _setupRole(DEFAULT_ADMIN_ROLE, _admin);
         tokenMHT = _tokenMHT;
 
-       
-
     }
 
     function setTokenMHT(address _tokenMHT) external onlyAdmin{
@@ -102,97 +100,91 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable {
     }
 
     // 5) Ability to mint hero for money 
-    function buy(uint8 _animalType) external{
+    function buyAnimal(uint8 _animalType) external{
         require(IERC20Upgradeable(tokenMHT).balanceOf(_msgSender())>=animalPrices[_animalType],"");
 
         IERC20Upgradeable(tokenMHT).safeTransferFrom(_msgSender(), address(this), animalPrices[_animalType]);
 
-        Hamster(hamsterContract)._mintAnimal(_animalType, _msgSender());
+        Hamster(hamsterContract).mintAnimal(_animalType, _msgSender());
         
     }
-
+    // 7) Upgrade parameters of hero 
     function upgradeSpecificTrait(uint256 _tokenID, uint8 _trait) external {
         uint8 _level = 0;
-        uint8 _name = uint8(Hamster(hamsterContract).animals[_tokenID].name);
+
+        (
+            uint8 _animalType,
+            uint8 _speed,
+            uint8 _immunity,
+            uint8 _armor,
+            uint32 _response
+        ) = Hamster(hamsterContract).getHeroParameters(_tokenID);
+        
         // Calculating level of trait
         // Speed
         if (_trait==0){
-            _level = Hamster(hamsterContract).animals[_tokenID].speed;
+            _level = _speed;
         } else
         // Immunity
         if (_trait==1){
-            _level = Hamster(hamsterContract).animals[_tokenID].immunity;
+            _level = _immunity;
         } else
         // Armor
         if (_trait==2){
-            _level = 4-Hamster(hamsterContract).animals[_tokenID].armor;
+            _level = 4-_armor;
         } else
-        // Speed
+        // Response
         if (_trait==3){
-            _level = 4 - (Hamster(hamsterContract).animals[_tokenID].speed)/500 ;
+            _level = uint8(4 - (_response)/500);
         } 
         require (((_level>=0)&&(_level<3)),"level is not in boundaries");
-        require ((IERC20Upgradeable(tokenMHT).balanceOf(_msgSender())>=animalSkillUpgradePrices[_name][_level]),"");
-        IERC20Upgradeable(tokenMHT).safeTransferFrom(_msgSender(), address(this), animalSkillUpgradePrices[_name][_level]);
+        require ((IERC20Upgradeable(tokenMHT).balanceOf(_msgSender())>=animalSkillUpgradePrices[_animalType][_level]),"");
+        IERC20Upgradeable(tokenMHT).safeTransferFrom(_msgSender(), address(this), animalSkillUpgradePrices[_animalType][_level]);
         // Upgrading trait
         // Speed
         if (_trait==0){
-            Hamster(hamsterContract).animals[_tokenID].speed += 1;
+            Hamster(hamsterContract).renewAnimalParameters(
+                _tokenID,
+                _animalType,
+                _speed += 1,
+                _immunity,
+                _armor,
+                _response
+            );
         } else
         // Immunity
         if (_trait==1){
-            Hamster(hamsterContract).animals[_tokenID].immunity += 1;
+            Hamster(hamsterContract).renewAnimalParameters(
+                _tokenID,
+                _animalType,
+                _speed,
+                _immunity += 1,
+                _armor,
+                _response
+            );
         } else
         // Armor
         if (_trait==2){
-            Hamster(hamsterContract).animals[_tokenID].armor -= 1;
+            Hamster(hamsterContract).renewAnimalParameters(
+                _tokenID,
+                _animalType,
+                _speed,
+                _immunity,
+                _armor -= 1,
+                _response
+            );
         } else
-        // Speed
+        // Response
         if (_trait==3){
-            Hamster(hamsterContract).animals[_tokenID].speed -= 500 ;
+            Hamster(hamsterContract).renewAnimalParameters(
+                _tokenID,
+                _animalType,
+                _speed,
+                _immunity,
+                _armor,
+                _response -= 500
+            );
         } 
     }
 
-
-
-    // function upgrade(uint256 _tokenID, .....) external {
-    //     uint256 price = 0;//calculate price here
-    //     tokenMHT.safeTransferFrom(_msgSender(), address(this), price);
-    //     Hamster(_address).upgrade(_tokenID);
-    // }
-
-    
-    // 7) Upgrade parameters of hero 
-// 7) Обновление параметров конкретного персонажа заплатив токеном MHT (юзер)
-    // function upgradeSpeed(uint256 _tokenID) public {
-    //     uint8 _level = animals[_tokenID].speed;
-    //     require((_level>=0)&&(_level<4),'level is not in boundaries');
-    //     require((tokenMHT.balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[_tokenID].name)][_level]),'not enough money for Speed upgrade');
-    //     animals[_tokenID].speed++;
-    // } 
-
-    // function upgradeImmunity(uint256 _tokenID) public {
-    //     uint8 _level = animals[_tokenID].immunity;
-    //     require((_level>=0)&&(_level<4),'level is not in boundaries');
-    //     require((tokenMHT.balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[_tokenID].name)][_level]),'not enough money for Immunity upgrade');
-    //     animals[_tokenID].immunity++;
-    // } 
-
-    // function upgradeArmor(uint256 _tokenID) public {
-    //     uint8 _level = 4 - animals[_tokenID].armor;
-    //     require((_level>0)&&(_level<=4),'level is not in boundaries');
-    //     require((tokenMHT.balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[_tokenID].name)][_level]),'not enough money for armor upgrade');
-    //     animals[_tokenID].armor--;
-    // } 
-
-    // function upgradeResponse(uint256 _tokenID) public {
-    //     uint8 _level = uint8(animals[_tokenID].response/500);
-    //     require((_level>0)&&(_level<=4),'level is not in boundaries');
-    //     require((tokenMHT.balanceOf(msg.sender)>=animalSkillUpgradePrices[_convertAnimal(animals[_tokenID].name)][_level]),'not enough money for Response upgrade');
-    //     animals[_tokenID].response -= 500;
-    // }
-
-   // function buyMint(uint8 _animalType, address _to) external onlyShop{
-
-    // }
 }
