@@ -10,7 +10,7 @@ import "../openzeppelin-contracts/utils/Strings.sol";
 
 contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, OwnableUpgradeable, PausableUpgradeable {
 
-    address public verifiedContract;
+address public verifiedContract; // Shop contract
 
    enum AnimalType{
         Hamster,
@@ -52,12 +52,16 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         verifiedContract = _shop;
         //hamster
         animalHamsterBurnAmount[0] = 1;
+        animalMaxAmount[0] = 0;
         //bull
         animalHamsterBurnAmount[1] = 20;
+        animalMaxAmount[1] = 5000;
         //bear
         animalHamsterBurnAmount[2] = 20;
+        animalMaxAmount[2] = 5000;
         //whale
         animalHamsterBurnAmount[3] = 50;
+        animalMaxAmount[3] = 1000;
     }
     function pause() external onlyOwner {
         _pause();
@@ -162,31 +166,23 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
     }
 
 //  2) Renew parameters of specific character
+
+    // changes all parameters except color_and_effects array by owner
     function _renewAnimalParameters(
         uint256 _tokenID,
         uint8 _animalType,
-        // uint64[8] memory _color_and_effects,
         uint8 _speed,
         uint8 _immunity,
         uint8 _armor,
         uint32 _response
         ) private {
         animals[_tokenID].name = AnimalType(_animalType);
-        // animals[_tokenID].color_and_effects[0]=_color_and_effects[0];
-        // animals[_tokenID].color_and_effects[1]=_color_and_effects[1];
-        // animals[_tokenID].color_and_effects[2]=_color_and_effects[2];
-        // animals[_tokenID].color_and_effects[3]=_color_and_effects[3];
-        // animals[_tokenID].color_and_effects[3]=_color_and_effects[3];
-        // animals[_tokenID].color_and_effects[3]=_color_and_effects[3];
-        // animals[_tokenID].color_and_effects[4]=_color_and_effects[4];
-        // animals[_tokenID].color_and_effects[5]=_color_and_effects[5];
-        // animals[_tokenID].color_and_effects[6]=_color_and_effects[6];
-        // animals[_tokenID].color_and_effects[7]=_color_and_effects[7];
         animals[_tokenID].speed = _speed;
         animals[_tokenID].immunity = _immunity;
         animals[_tokenID].armor = _armor;
         animals[_tokenID].response = _response;
     }
+    // returns color_and_effects array
     function _renewAnimalColorAndEffects(
         uint256 _tokenID
         )private{
@@ -213,6 +209,7 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
             animals[_tokenID].color_and_effects[7]=_color_and_effects[7];
     }
 
+    // function upgrade only in shop(by user)
     function renewAnimalParameters(
         uint256 _tokenID,
         uint8 _animalType,
@@ -299,7 +296,9 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         }
         
     }
+    // base mint
     function _mintAnimal(uint8 _animalType, address _to) private {
+        require(animalMaxAmount[_animalType] == 0 || animalMaxAmount[_animalType] >= animalMintedAmount[_animalType] + 1, "Can't mint that much of animals");
         uint256 _tokenID = ++lastMintedTokenID;
         _safeMint(_to, _tokenID);
         animals[_tokenID].name = AnimalType(_animalType);
@@ -318,11 +317,15 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
         animals[_tokenID].armor = adminAnimal.armor;
         animals[_tokenID].response = adminAnimal.response;
 
+        animalMintedAmount[_animalType]++;
+
+
         
     }
-
+    // mint for shop(by user)
     function mintAnimal(uint8 _animalType, address _to) external {
         require(_msgSender() == verifiedContract, "");
+        
         _mintAnimal(_animalType, _to);
     }
 
