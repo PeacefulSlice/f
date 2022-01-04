@@ -58,6 +58,8 @@ module.exports = {
       port: 8545,
       network_id: 5777, //Match Ganache(Truffle) network id
       gas: 5000000,
+      // gas: 0x1,
+      // gasPrice: 0x1fffffffffffff
     },
     rinkeby: {
       network_id: 4,

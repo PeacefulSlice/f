@@ -54,7 +54,7 @@
   "remixd": "remixd -s ./contracts/ --remix-ide https://remix.ethereum.org",
   
     
-  "ganache": "ganache-cli -q --networkId 5777 -l 40000000 -a 10",
+  "ganache": "ganache-cli --allowUnlimitedContractSize -q --networkId 5777  -l 40000000 -a ${ACCOUNT_AMOUNT:-10}",
   
     
   "ganachemain": "ganache-cli --networkId 5777 -q -f https://mainnet.infura.io/v3/c354fbd01fc446baa5422b69db1f4a24 -a ${ACCOUNT_AMOUNT:-10}",

@@ -43,7 +43,7 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable {
 
     }
 
-    function setDefaultAnimalPrices() private{
+    function setDefaultAnimalPrices() external onlyAdmin{
         uint8 _decimals = uint8(IToken(tokenMHT).decimals());
          //hamster
         animalPrices[0] = 10*(10**_decimals);
@@ -55,7 +55,7 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable {
         animalPrices[3] = 300*(10**_decimals);
     }
 
-    function setDefaultUpgradePrices() private{
+    function setDefaultUpgradePrices() external onlyAdmin{
         uint8 _decimals = uint8(IToken(tokenMHT).decimals());
         //hamster
         animalSkillUpgradePrices[0][0] = 5*(10**_decimals);
@@ -100,7 +100,7 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable {
     }
 
     // 5) Ability to mint hero for money 
-    function buyAnimal(uint8 _animalType) external{
+    function buyAnimal(uint8 _animalType) external whenNotPaused{
         require(IERC20Upgradeable(tokenMHT).balanceOf(_msgSender())>=animalPrices[_animalType],"");
 
         IERC20Upgradeable(tokenMHT).safeTransferFrom(_msgSender(), address(this), animalPrices[_animalType]);
@@ -109,16 +109,16 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable {
         
     }
     // 7) Upgrade parameters of hero 
-    function upgradeSpecificTrait(uint256 _tokenID, uint8 _trait) external {
+    function upgradeSpecificTrait(uint256 _tokenID, uint8 _trait) external whenNotPaused{
         uint8 _level = 0;
-
+ 
         (
             uint8 _animalType,
             uint8 _speed,
             uint8 _immunity,
             uint8 _armor,
             uint32 _response
-        ) = Hamster(hamsterContract).getHeroParameters(_tokenID);
+        ) = Hamster(hamsterContract).getAnimalParameters(_tokenID);
         
         // Calculating level of trait
         // Speed
@@ -137,7 +137,7 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable {
         if (_trait==3){
             _level = uint8(4 - (_response)/500);
         } 
-        require (((_level>=0)&&(_level<3)),"level is not in boundaries");
+        require (((_level>=0)&&(_level<=3)),"level is not in boundaries");
         require ((IERC20Upgradeable(tokenMHT).balanceOf(_msgSender())>=animalSkillUpgradePrices[_animalType][_level]),"");
         IERC20Upgradeable(tokenMHT).safeTransferFrom(_msgSender(), address(this), animalSkillUpgradePrices[_animalType][_level]);
         // Upgrading trait
@@ -152,7 +152,7 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable {
                 _response
             );
         } else
-        // Immunity
+        // Immunity 
         if (_trait==1){
             Hamster(hamsterContract).renewAnimalParameters(
                 _tokenID,

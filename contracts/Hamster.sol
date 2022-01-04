@@ -32,9 +32,9 @@ address public verifiedContract; // Shop contract
     }
 
     // contract limit parameters
-    mapping(uint8 => uint32) animalMaxAmount;
-    mapping(uint8 => uint64) animalMintedAmount;
-    mapping(uint8 => uint256) animalHamsterBurnAmount;
+    mapping(uint8 => uint32)  animalMaxAmount;
+    mapping(uint8 => uint64)  animalMintedAmount;
+    mapping(uint8 => uint256)  animalHamsterBurnAmount;
 
     // NFT Tokens
     mapping(uint256 => Animal) public animals;
@@ -63,6 +63,7 @@ address public verifiedContract; // Shop contract
         animalHamsterBurnAmount[3] = 50;
         animalMaxAmount[3] = 1000;
     }
+    
     function pause() external onlyOwner {
         _pause();
     }
@@ -125,7 +126,7 @@ address public verifiedContract; // Shop contract
         return _link;
     }
 //  1) read parameters of specific character
-    function getHeroParameters(uint256 _tokenID) public view returns(
+    function getAnimalParameters(uint256 _tokenID) public view returns(
         uint8,
         uint8,
         uint8,
@@ -141,7 +142,7 @@ address public verifiedContract; // Shop contract
         );
 
     }
-    function getHeroColorAndEffects(uint256 _tokenID) public view returns(
+    function getAnimalColorAndEffects(uint256 _tokenID) public view returns(
         uint64,
         uint64,
         uint64,
@@ -195,7 +196,7 @@ address public verifiedContract; // Shop contract
                 _color_and_effects[4],
                 _color_and_effects[5],
                 _color_and_effects[6],
-                _color_and_effects[7]) = getHeroColorAndEffects(_tokenID);
+                _color_and_effects[7]) = getAnimalColorAndEffects(_tokenID);
                 
             animals[_tokenID].color_and_effects[0]=_color_and_effects[0];
             animals[_tokenID].color_and_effects[1]=_color_and_effects[1];
@@ -217,7 +218,7 @@ address public verifiedContract; // Shop contract
         uint8 _immunity,
         uint8 _armor,
         uint32 _response
-        )external {
+        )external whenNotPaused{
             require(_msgSender() == verifiedContract, "");
             animals[_tokenID].name = AnimalType(_animalType);
             animals[_tokenID].speed = _speed;
@@ -267,7 +268,7 @@ address public verifiedContract; // Shop contract
     }
 
 //  4) Renew default character parameters
-    function setDefaultAnimalParameters() private{
+    function setDefaultAnimalParameters() external onlyOwner{
         adminAnimal.color_and_effects[0]=0;
         adminAnimal.color_and_effects[1]=0;
         adminAnimal.color_and_effects[2]=0;
@@ -284,7 +285,6 @@ address public verifiedContract; // Shop contract
 
     }
 
-
 //  6) Opportunity to mint a certain amount of heroes for free(presale or airdrop)
     function createAnimals(uint8 _animalType, uint256 _animalAmount) external onlyOwner {
         require(animalMaxAmount[_animalType] == 0 || animalMaxAmount[_animalType] >= animalMintedAmount[_animalType] + _animalAmount, "Can't mint that much of animals");
@@ -298,7 +298,7 @@ address public verifiedContract; // Shop contract
     }
     // base mint
     function _mintAnimal(uint8 _animalType, address _to) private {
-        require(animalMaxAmount[_animalType] == 0 || animalMaxAmount[_animalType] >= animalMintedAmount[_animalType] + 1, "Can't mint that much of animals");
+        // require(animalMaxAmount[_animalType] == 0 || animalMaxAmount[_animalType] >= animalMintedAmount[_animalType] + 1, "Can't mint that much of animals");
         uint256 _tokenID = ++lastMintedTokenID;
         _safeMint(_to, _tokenID);
         animals[_tokenID].name = AnimalType(_animalType);
@@ -310,8 +310,6 @@ address public verifiedContract; // Shop contract
         animals[_tokenID].color_and_effects[5]= adminAnimal.color_and_effects[5];
         animals[_tokenID].color_and_effects[6]= adminAnimal.color_and_effects[6];
         animals[_tokenID].color_and_effects[7]= adminAnimal.color_and_effects[7];
-        
-        
         animals[_tokenID].speed = adminAnimal.speed;
         animals[_tokenID].immunity = adminAnimal.immunity;
         animals[_tokenID].armor = adminAnimal.armor;
@@ -323,20 +321,12 @@ address public verifiedContract; // Shop contract
         
     }
     // mint for shop(by user)
-    function mintAnimal(uint8 _animalType, address _to) external {
+    function mintAnimal(uint8 _animalType, address _to) external whenNotPaused{
+        require(animalMaxAmount[_animalType] == 0 || animalMaxAmount[_animalType] >= animalMintedAmount[_animalType] + 1, "Can't mint that much of animals");
         require(_msgSender() == verifiedContract, "");
         
         _mintAnimal(_animalType, _to);
     }
-
- 
-
- 
-
-
-
-
-
 
 }
 
