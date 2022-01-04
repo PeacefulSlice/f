@@ -122,7 +122,17 @@ address public verifiedContract; // Shop contract
         string memory _link ="";
         if(_animalType==0){
             _link = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Pearl_Winter_White_Russian_Dwarf_Hamster_-_Front.jpg/1920px-Pearl_Winter_White_Russian_Dwarf_Hamster_-_Front.jpg";
+        } else 
+        if(_animalType==1){
+            _link = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Alas_Purwo_banteng_close_up.jpg/550px-Alas_Purwo_banteng_close_up.jpg";
+        } else 
+        if(_animalType==2){
+            _link = "https://xakep.ru/wp-content/uploads/2017/12/147134/bear.jpg";
+        } else 
+        if(_animalType==3){
+            _link = "https://images.immediate.co.uk/production/volatile/sites/23/2019/10/GettyImages-1164887104_Craig-Lambert-2faf563.jpg?quality=90&resize=620%2C413";
         }
+
         return _link;
     }
 //  1) read parameters of specific character
