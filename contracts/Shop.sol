@@ -5,7 +5,7 @@ import "./../contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "./../contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "./../contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./../contracts-upgradeable/proxy/utils/Initializable.sol";
-import "./../contracts-upgradeable/metatx/ERC2771ContextUpgradeable.sol";
+
 import "./Hamster.sol";
 
 
@@ -18,6 +18,8 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     address public tokenMHT;
     address public hamsterContract;
+    Hamster public hamster;
+    address public admin;
 
 
     bytes32 public constant USER_ROLE = keccak256("USER_ROLE");
@@ -32,9 +34,11 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable {
         __Context_init_unchained();
         __AccessControl_init();
         __Pausable_init_unchained();
-        
+        admin = _admin;
         _setupRole(DEFAULT_ADMIN_ROLE, _admin);
         tokenMHT = _tokenMHT;
+        setDefaultAnimalPrices();
+        setDefaultUpgradePrices();
 
     }
 
@@ -43,7 +47,7 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable {
 
     }
 
-    function setDefaultAnimalPrices() external onlyAdmin{
+    function setDefaultAnimalPrices() private{
         uint8 _decimals = uint8(IToken(tokenMHT).decimals());
          //hamster
         animalPrices[0] = 10*(10**_decimals);
@@ -55,7 +59,7 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable {
         animalPrices[3] = 300*(10**_decimals);
     }
 
-    function setDefaultUpgradePrices() external onlyAdmin{
+    function setDefaultUpgradePrices() private{
         uint8 _decimals = uint8(IToken(tokenMHT).decimals());
         //hamster
         animalSkillUpgradePrices[0][0] = 5*(10**_decimals);
@@ -101,7 +105,7 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable {
 
     // 5) Ability to mint hero for money 
     function buyAnimal(uint8 _animalType) external whenNotPaused{
-        require(IERC20Upgradeable(tokenMHT).balanceOf(_msgSender())>=animalPrices[_animalType],"");
+        require(IERC20Upgradeable(tokenMHT).balanceOf(_msgSender())>=animalPrices[_animalType],"not enough money");
 
         IERC20Upgradeable(tokenMHT).safeTransferFrom(_msgSender(), address(this), animalPrices[_animalType]);
 
@@ -110,6 +114,7 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable {
     }
     // 7) Upgrade parameters of hero 
     function upgradeSpecificTrait(uint256 _tokenID, uint8 _trait) external whenNotPaused{
+        // require((_msgSender()== ),"");
         uint8 _level = 0;
  
         (
@@ -124,6 +129,7 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable {
         // Speed
         if (_trait==0){
             _level = _speed;
+            require (((_level>=0)&&(_level<=3)),"speed is not in boundaries");
         } else
         // Immunity
         if (_trait==1){
@@ -138,7 +144,7 @@ contract Shop is Initializable, AccessControlUpgradeable, PausableUpgradeable {
             _level = uint8(4 - (_response)/500);
         } 
         require (((_level>=0)&&(_level<=3)),"level is not in boundaries");
-        require ((IERC20Upgradeable(tokenMHT).balanceOf(_msgSender())>=animalSkillUpgradePrices[_animalType][_level]),"");
+        require ((IERC20Upgradeable(tokenMHT).balanceOf(_msgSender())>=animalSkillUpgradePrices[_animalType][_level]),"not enough money for upgrade this trait");
         IERC20Upgradeable(tokenMHT).safeTransferFrom(_msgSender(), address(this), animalSkillUpgradePrices[_animalType][_level]);
         // Upgrading trait
         // Speed
