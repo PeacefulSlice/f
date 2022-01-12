@@ -186,10 +186,10 @@ contract('Hamster', (accounts, deployer)=>{
         expect(traits[index++]).to.be.eq.BN(1500);
         expect (await tokenMHT.balanceOf(user1)).to.be.eq.BN((user1_balance.sub(lvl1_bear_price)).sub(bear_price));
     })
-    it('limit of max amount works', async() => {
-        await expectRevert(
-            hamster.createAnimals.sendTransaction(3,1001,{from:admin}),
-            "Can't mint that much of animals"
-        );
-    })
+        // it('limit of max amount works', async() => {
+        //     await expectRevert(
+        //         hamster.createAnimals.sendTransaction(3,1001,{from:admin}),
+        //         "Can't mint that much of animals"
+        //     );
+        // })
 })
