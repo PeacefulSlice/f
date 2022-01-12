@@ -33,7 +33,7 @@ contract('Hamster', (accounts, deployer)=>{
     let tokenMHT;
     let index;
     let traits;
-    // let color_and_effects;
+    let color_and_effects;
     let full_amountTokenMHT;
     let hamsterURI;
     let user1_balance;
@@ -61,22 +61,22 @@ contract('Hamster', (accounts, deployer)=>{
     it('Setting default parameters', async() => {
         
         traits = await hamster.getDefaultParameters.call();
-        // color_and_effects = await hamster.getDefaultColorAndEffects.call();
+        color_and_effects = await hamster.getDefaultColorAndEffects.call();
         index = 0;
         expect(traits[index++]).to.be.eq.BN(0);
         expect(traits[index++]).to.be.eq.BN(0);
         expect(traits[index++]).to.be.eq.BN(0);
         expect(traits[index++]).to.be.eq.BN(4);
         expect(traits[index++]).to.be.eq.BN(2000);
-        // index = 0;
-        // expect(color_and_effects[index++]).to.be.eq.BN(0);
-        // expect(color_and_effects[index++]).to.be.eq.BN(0);
-        // expect(color_and_effects[index++]).to.be.eq.BN(0);
-        // expect(color_and_effects[index++]).to.be.eq.BN(0);
-        // expect(color_and_effects[index++]).to.be.eq.BN(0);
-        // expect(color_and_effects[index++]).to.be.eq.BN(0);
-        // expect(color_and_effects[index++]).to.be.eq.BN(0);
-        // expect(color_and_effects[index++]).to.be.eq.BN(0);
+        index = 0;
+        expect(color_and_effects[index++]).to.be.eq.BN(0);
+        expect(color_and_effects[index++]).to.be.eq.BN(0);
+        expect(color_and_effects[index++]).to.be.eq.BN(0);
+        expect(color_and_effects[index++]).to.be.eq.BN(0);
+        expect(color_and_effects[index++]).to.be.eq.BN(0);
+        expect(color_and_effects[index++]).to.be.eq.BN(0);
+        expect(color_and_effects[index++]).to.be.eq.BN(0);
+        expect(color_and_effects[index++]).to.be.eq.BN(0);
     })
 
 
@@ -84,22 +84,22 @@ contract('Hamster', (accounts, deployer)=>{
     it('Minting', async()=>{
         await hamster.createAnimals.sendTransaction(0,1,{from:admin});
         traits = await hamster.getAnimalParameters.call(1);
-        // color_and_effects = await hamster.getAnimalColorAndEffects.call(1);
+        color_and_effects = await hamster.getAnimalColorAndEffects.call(1);
         index = 0;
         expect(traits[index++]).to.be.eq.BN(0);
         expect(traits[index++]).to.be.eq.BN(0);
         expect(traits[index++]).to.be.eq.BN(0);
         expect(traits[index++]).to.be.eq.BN(4);
         expect(traits[index++]).to.be.eq.BN(2000);
-        // index = 0;
-        // expect(color_and_effects[index++]).to.be.eq.BN(0);
-        // expect(color_and_effects[index++]).to.be.eq.BN(0);
-        // expect(color_and_effects[index++]).to.be.eq.BN(0);
-        // expect(color_and_effects[index++]).to.be.eq.BN(0);
-        // expect(color_and_effects[index++]).to.be.eq.BN(0);
-        // expect(color_and_effects[index++]).to.be.eq.BN(0);
-        // expect(color_and_effects[index++]).to.be.eq.BN(0);
-        // expect(color_and_effects[index++]).to.be.eq.BN(0);
+        index = 0;
+        expect(color_and_effects[index++]).to.be.eq.BN(0);
+        expect(color_and_effects[index++]).to.be.eq.BN(0);
+        expect(color_and_effects[index++]).to.be.eq.BN(0);
+        expect(color_and_effects[index++]).to.be.eq.BN(0);
+        expect(color_and_effects[index++]).to.be.eq.BN(0);
+        expect(color_and_effects[index++]).to.be.eq.BN(0);
+        expect(color_and_effects[index++]).to.be.eq.BN(0);
+        expect(color_and_effects[index++]).to.be.eq.BN(0);
     })
 
 

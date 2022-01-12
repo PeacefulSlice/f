@@ -110,59 +110,60 @@ address public hamsterURIContract;
         );
 
     }
-//  1) function getAnimalColorAndEffects(uint256 _tokenID) public view returns(
-    //     uint64,
-    //     uint64,
-    //     uint64,
-    //     uint64,
-    //     uint64,
-    //     uint64,
-    //     uint64,
-    //     uint64
-    //     ){
-    //     uint index = 0;
-    //     uint64[8] memory colordata = animals[_tokenID].color_and_effects;
-    //     return(
-    //         colordata[index++],
-    //         colordata[index++],
-    //         colordata[index++],
-    //         colordata[index++],
-    //         colordata[index++],
-    //         colordata[index++],
-    //         colordata[index++],
-    //         colordata[index++]
-    //     );
-    // }
+//  1) 
+ function getAnimalColorAndEffects(uint256 _tokenID) public view returns(
+        uint64,
+        uint64,
+        uint64,
+        uint64,
+        uint64,
+        uint64,
+        uint64,
+        uint64
+        ){
+        uint index = 0;
+        uint64[8] memory colordata = animals[_tokenID].color_and_effects;
+        return(
+            colordata[index++],
+            colordata[index++],
+            colordata[index++],
+            colordata[index++],
+            colordata[index++],
+            colordata[index++],
+            colordata[index++],
+            colordata[index++]
+        );
+    }
 
 //  2) Renew parameters of specific character
 
  
     // returns color_and_effects array
-    // function _renewAnimalColorAndEffects(
-    //     uint256 _tokenID
-    //     )private{
-    //         uint64[8] memory _color_and_effects;
-    //         (
-    //             _color_and_effects[0],
-    //             _color_and_effects[1],
-    //             _color_and_effects[2],
-    //             _color_and_effects[3],
-    //             _color_and_effects[4],
-    //             _color_and_effects[5],
-    //             _color_and_effects[6],
-    //             _color_and_effects[7]) = getAnimalColorAndEffects(_tokenID);
+    function _renewAnimalColorAndEffects(
+        uint256 _tokenID
+        )private{
+            uint64[8] memory _color_and_effects;
+            (
+                _color_and_effects[0],
+                _color_and_effects[1],
+                _color_and_effects[2],
+                _color_and_effects[3],
+                _color_and_effects[4],
+                _color_and_effects[5],
+                _color_and_effects[6],
+                _color_and_effects[7]) = getAnimalColorAndEffects(_tokenID);
                 
-    //         animals[_tokenID].color_and_effects[0]=_color_and_effects[0];
-    //         animals[_tokenID].color_and_effects[1]=_color_and_effects[1];
-    //         animals[_tokenID].color_and_effects[2]=_color_and_effects[2];
-    //         animals[_tokenID].color_and_effects[3]=_color_and_effects[3];
-    //         animals[_tokenID].color_and_effects[3]=_color_and_effects[3];
-    //         animals[_tokenID].color_and_effects[3]=_color_and_effects[3];
-    //         animals[_tokenID].color_and_effects[4]=_color_and_effects[4];
-    //         animals[_tokenID].color_and_effects[5]=_color_and_effects[5];
-    //         animals[_tokenID].color_and_effects[6]=_color_and_effects[6];
-    //         animals[_tokenID].color_and_effects[7]=_color_and_effects[7];
-    // }
+            animals[_tokenID].color_and_effects[0]=_color_and_effects[0];
+            animals[_tokenID].color_and_effects[1]=_color_and_effects[1];
+            animals[_tokenID].color_and_effects[2]=_color_and_effects[2];
+            animals[_tokenID].color_and_effects[3]=_color_and_effects[3];
+            animals[_tokenID].color_and_effects[3]=_color_and_effects[3];
+            animals[_tokenID].color_and_effects[3]=_color_and_effects[3];
+            animals[_tokenID].color_and_effects[4]=_color_and_effects[4];
+            animals[_tokenID].color_and_effects[5]=_color_and_effects[5];
+            animals[_tokenID].color_and_effects[6]=_color_and_effects[6];
+            animals[_tokenID].color_and_effects[7]=_color_and_effects[7];
+    }
 
     // function upgrade 
     function renewAnimalParameters(
@@ -184,27 +185,27 @@ address public hamsterURIContract;
         }
 
 //  3)Read default character parameters
-    // function getDefaultColorAndEffects() external view returns(
-    //     uint64,
-    //     uint64,
-    //     uint64,
-    //     uint64,
-    //     uint64,
-    //     uint64,
-    //     uint64,
-    //     uint64
-    //     ){
-    //     return(
-    //         adminAnimal.color_and_effects[0],
-    //         adminAnimal.color_and_effects[1],
-    //         adminAnimal.color_and_effects[2],
-    //         adminAnimal.color_and_effects[3],
-    //         adminAnimal.color_and_effects[4],
-    //         adminAnimal.color_and_effects[5],
-    //         adminAnimal.color_and_effects[6],
-    //         adminAnimal.color_and_effects[7]
-    //     );
-    // }
+    function getDefaultColorAndEffects() external view returns(
+        uint64,
+        uint64,
+        uint64,
+        uint64,
+        uint64,
+        uint64,
+        uint64,
+        uint64
+        ){
+        return(
+            adminAnimal.color_and_effects[0],
+            adminAnimal.color_and_effects[1],
+            adminAnimal.color_and_effects[2],
+            adminAnimal.color_and_effects[3],
+            adminAnimal.color_and_effects[4],
+            adminAnimal.color_and_effects[5],
+            adminAnimal.color_and_effects[6],
+            adminAnimal.color_and_effects[7]
+        );
+    }
 
 
     function getDefaultParameters() external view  returns(
