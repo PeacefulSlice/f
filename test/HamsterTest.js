@@ -8,34 +8,32 @@ chai.use(require('chai-match'));
 chai.use(require('bn-chai')(BN));
 
 const TestToken = artifacts.require('TestToken');
-// const PProxy = artifacts.require('PProxy');
-// const PProxyAdmin = artifacts.require('PProxyAdmin');
-const Hamster = artifacts.require('Hamster');
-const Shop = artifacts.require('Shop');
-const HamsterURI = artifacts.require('HamsterURI');
+const MarketHeroAnimal = artifacts.require('MarketHeroAnimal');
+const MarketHeroShop = artifacts.require('MarketHeroShop');
+const MarketHeroURI = artifacts.require('MarketHeroURI');
 
 function toBN(number){
     return web3.utils.toBN(number);
 }
 
 
-contract('Hamster', (accounts, deployer)=>{
+contract('MarketHero', (accounts)=>{
     
     let admin = accounts[0];
     let user1 = accounts[1];
     const decimals = toBN(10).pow(toBN(18));
 
     // let proxyInstance;
-    let masterHamsterCopy;
-    let masterShopCopy;
-    let hamster;
+    let masterMarketHeroAnimalCopy;
+    let masterMarketHeroShopCopy;
+    let animal;
     let shop;
     let tokenMHT;
     let index;
     let traits;
     let color_and_effects;
     let full_amountTokenMHT;
-    let hamsterURI;
+    let marketHeroURI;
     let user1_balance;
     let bear_price;
     let lvl1_bear_price;
@@ -47,44 +45,36 @@ contract('Hamster', (accounts, deployer)=>{
 
 
     before(async()=>{
-        await HamsterURI.deployed().then(instance => hamsterURI = instance);
+        await MarketHeroURI.deployed().then(instance => marketHeroURI = instance);
         await TestToken.new(toBN(1000).mul(decimals),"TokenMHT","MHT").then(instance => tokenMHT = instance);
-        await Shop.new().then(instance => masterShopCopy = instance);
-        await Hamster.new().then(instance => masterHamsterCopy = instance); 
-        shop = await Shop.at(masterShopCopy.address);
-        hamster = await Hamster.at(masterHamsterCopy.address);
+        await MarketHeroShop.new().then(instance => masterMarketHeroShopCopy = instance);
+        await MarketHeroAnimal.new().then(instance => masterMarketHeroAnimalCopy = instance); 
+        shop = await MarketHeroShop.at(masterMarketHeroShopCopy.address);
+        animal = await MarketHeroAnimal.at(masterMarketHeroAnimalCopy.address);
         await shop.initialize.sendTransaction(admin, tokenMHT.address);
-        await hamster.initialize.sendTransaction(admin, shop.address, hamsterURI.address);
-        await shop.setHamsterContract(hamster.address);
+        await animal.initialize.sendTransaction(admin, shop.address, marketHeroURI.address);
+        await shop.setMarketHeroAnimalContract(animal.address);
     })
 
     it('Setting default parameters', async() => {
         
-        traits = await hamster.getDefaultParameters.call();
-        color_and_effects = await hamster.getDefaultColorAndEffects.call();
+        traits = await animal.getDefaultParameters.call();
+        
         index = 0;
         expect(traits[index++]).to.be.eq.BN(0);
         expect(traits[index++]).to.be.eq.BN(0);
         expect(traits[index++]).to.be.eq.BN(0);
         expect(traits[index++]).to.be.eq.BN(4);
         expect(traits[index++]).to.be.eq.BN(2000);
-        index = 0;
-        expect(color_and_effects[index++]).to.be.eq.BN(0);
-        expect(color_and_effects[index++]).to.be.eq.BN(0);
-        expect(color_and_effects[index++]).to.be.eq.BN(0);
-        expect(color_and_effects[index++]).to.be.eq.BN(0);
-        expect(color_and_effects[index++]).to.be.eq.BN(0);
-        expect(color_and_effects[index++]).to.be.eq.BN(0);
-        expect(color_and_effects[index++]).to.be.eq.BN(0);
-        expect(color_and_effects[index++]).to.be.eq.BN(0);
+        
     })
 
 
 
     it('Minting', async()=>{
-        await hamster.createAnimals.sendTransaction(0,1,{from:admin});
-        traits = await hamster.getAnimalParameters.call(1);
-        color_and_effects = await hamster.getAnimalColorAndEffects.call(1);
+        await animal.createAnimals.sendTransaction(0,1,{from:admin});
+        traits = await animal.getAnimalParameters.call(1);
+        color_and_effects = await animal.getAnimalColorAndEffects.call(1);
         index = 0;
         expect(traits[index++]).to.be.eq.BN(0);
         expect(traits[index++]).to.be.eq.BN(0);
@@ -105,8 +95,8 @@ contract('Hamster', (accounts, deployer)=>{
 
 
     it('renew parameters(by admin)', async() => {
-        await hamster.renewAnimalParameters.sendTransaction(1,1,1,1,3,1500,{from:admin});
-        traits = await hamster.getAnimalParameters.call(1);
+        await animal.renewAnimalParameters.sendTransaction(1,1,1,1,3,1500,{from:admin});
+        traits = await animal.getAnimalParameters.call(1);
         index = 0;
         expect(traits[index++]).to.be.eq.BN(1);
         expect(traits[index++]).to.be.eq.BN(1);
@@ -118,7 +108,7 @@ contract('Hamster', (accounts, deployer)=>{
     
     it('upgrading by user in shop', async() => {
         // allowance and transferring tokeMHT
-        await hamster.safeTransferFrom.sendTransaction(admin,user1,1);
+        await animal.safeTransferFrom.sendTransaction(admin,user1,1);
         full_amountTokenMHT = toBN(1000).mul(decimals);
         await tokenMHT.approve(shop.address, full_amountTokenMHT, {from:admin});
         await tokenMHT.transfer.sendTransaction(user1, full_amountTokenMHT);
@@ -128,7 +118,7 @@ contract('Hamster', (accounts, deployer)=>{
         lvl2_bull_price = toBN(150).mul(decimals);
         // Speed
         await shop.upgradeSpecificTrait(1,0,{from:user1});
-        traits = await hamster.getAnimalParameters.call(1);
+        traits = await animal.getAnimalParameters.call(1);
         index = 0;
         expect(traits[index++]).to.be.eq.BN(1);
         expect(traits[index++]).to.be.eq.BN(2);
@@ -138,7 +128,7 @@ contract('Hamster', (accounts, deployer)=>{
         expect ( await tokenMHT.balanceOf(user1)).to.be.eq.BN(full_amountTokenMHT.sub(lvl2_bull_price));
         // Immunity
         await shop.upgradeSpecificTrait(1,1,{from:user1});
-        traits = await hamster.getAnimalParameters.call(1);
+        traits = await animal.getAnimalParameters.call(1);
         index = 0;
         expect(traits[index++]).to.be.eq.BN(1);
         expect(traits[index++]).to.be.eq.BN(2);
@@ -148,7 +138,7 @@ contract('Hamster', (accounts, deployer)=>{
         expect ( await tokenMHT.balanceOf(user1)).to.be.eq.BN(full_amountTokenMHT.sub(lvl2_bull_price).sub(lvl2_bull_price));
         // Armor
         await shop.upgradeSpecificTrait(1,2,{from:user1});
-        traits = await hamster.getAnimalParameters.call(1);
+        traits = await animal.getAnimalParameters.call(1);
         index = 0;
         expect(traits[index++]).to.be.eq.BN(1);
         expect(traits[index++]).to.be.eq.BN(2);
@@ -158,7 +148,7 @@ contract('Hamster', (accounts, deployer)=>{
         expect ( await tokenMHT.balanceOf(user1)).to.be.eq.BN(full_amountTokenMHT.sub(lvl2_bull_price).sub(lvl2_bull_price).sub(lvl2_bull_price));
         // Response
         await shop.upgradeSpecificTrait(1,3,{from:user1});
-        traits = await hamster.getAnimalParameters.call(1);
+        traits = await animal.getAnimalParameters.call(1);
         index = 0;
         expect(traits[index++]).to.be.eq.BN(1);
         expect(traits[index++]).to.be.eq.BN(2);
@@ -177,7 +167,7 @@ contract('Hamster', (accounts, deployer)=>{
         await shop.buyAnimal(2,{from:user1});
         expect (await tokenMHT.balanceOf(user1)).to.be.eq.BN(user1_balance.sub(bear_price));
         await shop.upgradeSpecificTrait(2,3,{from:user1});
-        traits = await hamster.getAnimalParameters.call(2);
+        traits = await animal.getAnimalParameters.call(2);
         index = 0;
         expect(traits[index++]).to.be.eq.BN(2);
         expect(traits[index++]).to.be.eq.BN(0);
@@ -188,7 +178,7 @@ contract('Hamster', (accounts, deployer)=>{
     })
         // it('limit of max amount works', async() => {
         //     await expectRevert(
-        //         hamster.createAnimals.sendTransaction(3,1001,{from:admin}),
+        //         await animal.createAnimals.sendTransaction(3,1001,{from:admin}),
         //         "Can't mint that much of animals"
         //     );
         // })

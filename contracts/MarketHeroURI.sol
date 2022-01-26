@@ -4,7 +4,7 @@ import "../base64-sol/base64.sol";
 
 import "../openzeppelin-contracts/utils/Strings.sol";
 
-contract HamsterURI {
+contract MarketHeroURI {
     
     
     function convert(string memory __name, uint8 link, uint8 name, uint8 speed, uint8 immunity, uint8 armor, uint32 response) external pure returns(string memory){
