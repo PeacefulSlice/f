@@ -7,7 +7,7 @@ import "../contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "../contracts-upgradeable/proxy/utils/Initializable.sol";
 import '../contracts-upgradeable/access/OwnableUpgradeable.sol';
-
+// gwkemtrewstgpwbrtbmwrt
 contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, OwnableUpgradeable, PausableUpgradeable {
 
    enum AnimalType{
@@ -49,8 +49,8 @@ contract Hamster is Initializable, ContextUpgradeable, ERC721Upgradeable, Ownabl
 
     ) public initializer{
         
-        __Context_init_unchained();
         __Pausable_init_unchained();
+        __Context_init_unchained();
         __Ownable_init_unchained();
         transferOwnership(_admin);
         
